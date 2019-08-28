@@ -5,7 +5,7 @@
 │   ├── php.md
 │   ├── shell.md
 │   ├── src
-│   │   └── init.sh.txt
+│   │   └── centos_init.sh
 │   ├── 开发工具
 │   │   ├── clion.md
 │   │   ├── git.md
@@ -28,7 +28,6 @@
 │       ├── 交换机.md
 │       └── 路由器.md
 ├── SYSTEM
-│   ├── debian_live.md
 │   ├── WEB服务器
 │   │   ├── nginx
 │   │   │   ├── 常用配置.md
@@ -64,6 +63,8 @@
 │   │   │   ├── certbot.md
 │   │   │   └── shen-qing-shi-yong.md
 │   │   └── tools.md
+│   ├── 工作环境
+│   │   └── debian_live.md
 │   ├── 基准测试
 │   │   ├── geekbench.md
 │   │   ├── sysbench
@@ -152,4 +153,4 @@
 │       └── xen.md
 └── tree.txt
 
-43 directories, 128 files
+44 directories, 128 files
