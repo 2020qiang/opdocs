@@ -1,6 +1,6 @@
 #### **iptables 常用的表和链**
 
-![](/assets/截图 - 2017年06月05日 - 21时39分43秒.png)
+![](img/img1.png)
 
 * 命令：`iptables -t [指定表] -A [指定链] [规则...] -j [动作]`
   * `-A`： 附加规则到所选链的末尾
@@ -115,7 +115,7 @@
 
 #### NetFilter 框架
 
-![](/assets/截图 - 2017年06月05日 - 21时09分26秒.png)
+![](img/img2.png)
 
 * 用户空间
   * nginx , vsftpd , libvirtd , shhd ...
@@ -130,7 +130,7 @@
 
 **对应的钩子：**
 
-![](/assets/截图 - 2017年06月05日 - 21时37分42秒.png)
+![](img/img3.png)
 
 ---
 
@@ -140,11 +140,11 @@
 
 **syn flood** 或称SYN洪水，client 与 server 间创建 TCP 连接时，正常情况下 client 与 server 交换一系列的信息如下：
 
-![](/assets/截图 - 2017年06月12日 - 23时10分50秒.png)
+![](img/img4.png)
 
 server 被攻击的过程：
 
-![](/assets/截图 - 2017年06月12日 - 23时12分10秒.png)
+![](img/img5.png)
 
 在软防 iptables 方面做防范
 
