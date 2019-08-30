@@ -56,7 +56,7 @@ weed server -master.port=9333 -volume.port=8080 -dir="/opt/weed"
 
 ## 使用
 
-上传/更新 文件
+#### 上传/更新 文件
 
 ```shell
 # 以获取fid卷和服务器URL
@@ -87,7 +87,7 @@ curl -F file=@/etc/hosts http://localhost:8080/3,01637037d6
 
 >   注意：存储数据字段到数据库，请检查有足够的空间，检查上面的`存储:`，所以16个字节绰绰有余
 
-获取/下载 文件
+#### 获取/下载 文件
 
 ```shell
 # 使用存储中的id查找卷服务器的URL
@@ -99,7 +99,7 @@ curl -s http://localhost:8080/3/01637037d6/my_preferred_name.txt
 curl -s http://localhost:8080/3/01637037d6.txt
 curl -s http://localhost:8080/3,01637037d6.txt
 curl -s http://localhost:8080/3/01637037d6
-curl -shttp://localhost:8080/3,01637037d6
+curl -s http://localhost:8080/3,01637037d6
 
 # 或者获取压缩版本
 http://localhost:8080/3/01637037d6.txt?height=200&width=200
@@ -107,7 +107,7 @@ http://localhost:8080/3/01637037d6.txt?height=200&width=200&mode=fit
 http://localhost:8080/3/01637037d6.txt?height=200&width=200&mode=fill
 ```
 
-删除 文件
+#### 删除 文件
 
 ```shell
 curl -X DELETE http://localhost:8080/3,01637037d6
@@ -115,7 +115,7 @@ curl -X DELETE http://localhost:8080/3,01637037d6
 
 
 
-查看状态
+## 状态
 
 ```shell
 # master
@@ -132,7 +132,7 @@ curl -s http://localhost:8080/status
 
 ```shell
 # master
-http://192.168.56.104:9333
+http://192.168.56.101:9333
 
 # volume
 http://localhost:8080/ui/index.html
@@ -158,55 +158,226 @@ http://localhost:8080/ui/index.html
 
 *   概念
 
-    *   master
+```
+defaultReplication 复制类型
 
-        *   `defaultReplication` 复制类型
+000  没有复制，只有一个副本
+001  在同一个机架上复制一次
+010  在同一数据中心的不同机架上复制一次
+100  在不同的数据中心复制一次
+200  在另外两个不同的数据中心复制两次
+110  在不同的机架上复制一次，在不同的数据中心复制一次
+...  ...
 
-            *   ```
-                000  没有复制，只有一个副本
-                001  在同一个机架上复制一次
-                010  在同一数据中心的不同机架上复制一次
-                100  在不同的数据中心复制一次
-                200  在另外两个不同的数据中心复制两次
-                110  在不同的机架上复制一次，在不同的数据中心复制一次
-                ...  ...
-                
-                =xyz
-                x  - 复制的数量，在 数据中心
-                y  - 复制的数量，在 物理服务器 in the 同一个数据中心
-                z  - 复制的数量，在 服务端 in the 同一个物理服务器
-                x,y,z  - 0,1,2
-                ```
-
-    *   volume
-
-        *   `dataCenter` 当前卷服务器的数据中心名称
-        *   `rack` 当前卷服务器的机架名称
+=xyz
+x  - 复制的数量，在 数据中心
+y  - 复制的数量，在 物理服务器 in the 同一个数据中心
+z  - 复制的数量，在 服务端 in the 同一个物理服务器
+x,y,z  - 0,1,2
+意味着rack最大只能3个，dataCenter最大只能三个
+```
 
 *   操作
 
-    *   机房一
+```shell
+# dataCenter 当前卷服务器的数据中心名称
+# rack       当前卷服务器的机架名称
 
-        *   机器一
+weed master -defaultReplication=002 -port=9333 -mdir=/tmp/m1
 
-        *   ```shell
-            weed volume -port=8081 -dir=/tmp/1 -mserver="d:9333" -dataCenter=dc1 -rack=rack1
-            weed volume -port=8082 -dir=/tmp/2 -mserver="d:9333" -dataCenter=dc1 -rack=rack1
-            ```
-
-        *   机器二
-
-        *   ```shell
-            weed volume -port=8081 -dir=/tmp/1 -mserver="d:9333" -dataCenter=dc1 -rack=rack2
-            weed volume -port=8082 -dir=/tmp/2 -mserver="d:9333" -dataCenter=dc1 -rack=rack2
-            ```
+weed volume -rack=rack1 -dir=/tmp/v1 -port=8080 -mserver=localhost:9333
+weed volume -rack=rack1 -dir=/tmp/v2 -port=8081 -mserver=localhost:9333
+weed volume -rack=rack1 -dir=/tmp/v3 -port=8082 -mserver=localhost:9333
+```
 
 
 
-# todo
+## 文件TTL
 
-*   复制
-*   迁移
-*   高可用
-*   文件管理器
+假设我们要存储TTL为3分钟的文件，到期后返回 http code 404
+
+首先，要求主服务器将文件ID分配给具有3分钟TTL的卷：
+
+```shell
+curl http://localhost:9333/dir/assign?ttl=30s
+# {"count":1,"fid":"5,01637037d6","url":"127.0.0.1:8080","publicUrl":"localhost:8080"}
+```
+
+上传文件
+
+```shell
+curl -F "file=@x.go" http://127.0.0.1:8080/5,01637037d6?ttl=3m
+```
+
+支持的TTL格式示例
+
+```shell
+'m'分，'h'时，'d'天，'w'周，'M'月，'y'年
+```
+
+>   `ttl=3m` 使用了两次，没有什么特殊的含义，只是简化了seaweedfs内部TTL卷的管理
+
+
+
+## 故障转移
+
+主服务器由Raft协议协调，以选举leader。leader接管所有的工作，管理卷、分配文件ID
+所有其他主服务器只是简单地将请求转发给leader
+
+通常会启动3/5个主服务器，然后启动卷服务器
+
+```shell
+weed master -port=9333 -mdir=/tmp/m1 -peers=localhost:9333,localhost:9334,localhost:9335
+weed master -port=9334 -mdir=/tmp/m2 -peers=localhost:9333,localhost:9334,localhost:9335
+weed master -port=9335 -mdir=/tmp/m3 -peers=localhost:9333,localhost:9334,localhost:9335
+
+weed volume -dir=/tmp/v1 -port=8080 -mserver=localhost:9333,localhost:9334,localhost:9335
+weed volume -dir=/tmp/v2 -port=8081 -mserver=localhost:9333,localhost:9334,localhost:9335
+weed volume -dir=/tmp/v3 -port=8082 -mserver=localhost:9333,localhost:9334,localhost:9335
+```
+
+>   客户端可检查leader，从而实现高可用
+
+
+
+## 备份
+
+1.  直接备份源数据文件
+
+    ```shell
+    tar -czvf "/opt/backup/seaweedfs-$(date '+%Y%m%d-%H%M%S').tar.gz" "/opt/seaweedfs"
+    ```
+
+2.  使用备份工具
+
+    ```shell
+    BackupDir="/opt/backup/seaweedfs"
+    [[ ! -d "${BackupDir}" ]] && mkdir -p "${BackupDir}"
+    for (( i = 0; i < $(max_volume_id); i++ )) {
+        weed backup -server="127.0.0.1:9333" -dir="${BackupDir}" -volumeId="${i}"
+        sleep 6s
+    }
+    tar -czvf "${BackupDir}-$(date '+%Y%m%d-%H%M%S').tar.gz" "${BackupDir}"
+    rm -rf "${BackupDir}"
+    ```
+
+### 还原
+
+```shell
+tar -xvf "/opt/backup/seaweedfs-$(date '+%Y%m%d-%H%M%S').tar.gz" -C "/opt/seaweedfs"
+```
+
+
+
+## 目录和文件
+
+在谈论文件系统时，许多人会假设目录，在目录下列出文件等等
+
+Filer有一个连接到Master的持久客户端，以获取所有卷的位置更新。没有网络往返来查找卷ID位置。
+
+现在您可以添加/删除文件，甚至可以浏览子目录和文件
+
+上传
+
+```shell
+curl -F "f=@README.md" "http://localhost:8888/path/to/sources/"
+curl -F "f=@README.md" "http://localhost:8888/path/to/sources/new_name"
+```
+
+下载
+
+```shell
+curl "http://localhost:8888/path/to/sources/new_name"
+```
+
+列出文件及目录
+
+```shell
+curl -s -H 'Accept: application/json' "http://localhost:8888"
+```
+
+删除文件
+
+```shell
+curl -X DELETE "http://localhost:8888/path/to/sources/new_name"
+```
+
+删除目录中所有文件
+
+```shell
+curl -X DELETE "http://localhost:8888/path/to/sources/dir?recursive=true"
+```
+
+问题：必须手动指定leader master
+
+>    解决：中间可以增加机器集群分发器指定leader
+
+问题：大文件(>100MB)上传时，复制不会全部一样
+
+
+
+## 挂载目录
+
+支持本地文件操作，fuse虚拟出linux环境的目录
+
+```shell
+sudo yum install -y fuse
+sudo weed mount -filer=localhost:8888 -dir=/opt/dir
+```
+
+
+
+# 基本架构
+
+```mermaid
+graph LR
+client[客户端] -->vip_f(vip)
+    vip_f -.- filer1[filer1]
+    vip_f -.- filer2[filer2]
+
+    vip_s(vip)
+    filer1 --> vip_s
+    filer2 --> vip_s
+    
+    server1[server1]
+    server2[server2]
+    server3[server3]
+    vip_s -.- server1
+    vip_s -.- server2
+    vip_s -.- server3
+```
+
+*   `server[1,2,3]` 每台机器上面跑了一个volume和master
+*   `server[1,2,3]` 在一个集群中，之间有配置复制
+*   `server[1,2,3]` 之间用keepalived的vip做高可用，vip指向leader
+*   `filer[1,2]` 上面跑着filer，指向server的vip
+*   `filer[1,2]` 之间用keepalived的vip做高可用，vip检测本应用存活
+*   客户端只需要请求filer的vip
+
+```shell
+# server[1,2,3]
+
+rm -rf   /tmp/{m{1,2,3},v{1,2,3}}
+mkdir -p /tmp/{m{1,2,3},v{1,2,3}}
+
+weed master -defaultReplication=002 -port=9333 -mdir=/tmp/m1 \
+  -peers=localhost:9333,localhost:9334,localhost:9335
+weed master -defaultReplication=002 -port=9334 -mdir=/tmp/m2 \
+  -peers=localhost:9333,localhost:9334,localhost:9335
+weed master -defaultReplication=002 -port=9335 -mdir=/tmp/m3 \
+  -peers=localhost:9333,localhost:9334,localhost:9335
+
+weed volume -rack=rack1 -dir=/tmp/v1 -port=8080  \
+  -mserver=localhost:9333,localhost:9334,localhost:9335
+weed volume -rack=rack1 -dir=/tmp/v2 -port=8081 \
+  -mserver=localhost:9333,localhost:9334,localhost:9335
+weed volume -rack=rack1 -dir=/tmp/v3 -port=8082 \
+  -mserver=localhost:9333,localhost:9334,localhost:9335
+```
+
+```shell
+# filer[1,2]
+```
+
+
 
