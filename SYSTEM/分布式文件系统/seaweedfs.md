@@ -348,7 +348,7 @@ client[客户端] -->vip_f(vip)
 ```
 
 *   `server[1,2,3]` 每台机器上面跑了一个volume和master
-*   `server[1,2,3]` 在一个集群中，之间有配置复制
+*   `server[1,2,3]` volume在一个集群中，之间有卷复制
 *   `server[1,2,3]` 之间用keepalived的vip做高可用，vip指向leader
 *   `filer[1,2]` 上面跑着filer，指向server的vip
 *   `filer[1,2]` 之间用keepalived的vip做高可用，vip检测本应用存活
