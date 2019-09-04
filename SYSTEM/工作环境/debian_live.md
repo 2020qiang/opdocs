@@ -222,7 +222,7 @@ apt-get upgrade -y
 apt-get dist-upgrade -y
 software_list='''
     locales ttf-wqy-microhei ttf-wqy-zenhei
-    vim bash-completion htop wget curl tree axel xsel xterm apt-file unzip bc
+    vim bash-completion htop wget curl tree axel xsel xterm apt-file unzip bc less
     xclip git-core iotop build-essential gparted iftop unrar redis-tools mariadb-client
     xpad leafpad lightdm terminator sshpass keepassx dia gpick feh exfat-fuse exfat-utils
     chromium chromium-l10n firefox-esr firefox-esr-l10n-zh-cn
@@ -278,18 +278,18 @@ chmod +x .bashrc
 ### 打包为 squash 文件系统
 
 ```shell
-mkdir -vp $HOME/LIVE_BOOT/{scratch,image/live}
-sudo mksquashfs                            \
-    $HOME/LIVE_BOOT/chroot                 \
-    $HOME/LIVE_BOOT/image/live/os.squashfs \
+mkdir -vp ${HOME}/LIVE_BOOT/{scratch,image/live}
+sudo mksquashfs                              \
+    ${HOME}/LIVE_BOOT/chroot                 \
+    ${HOME}/LIVE_BOOT/image/live/os.squashfs \
     -e boot
 ```
 
 #### 拷贝内核
 
 ```shell
-cp -v $HOME/LIVE_BOOT/chroot/boot/vmlinuz-*     $HOME/LIVE_BOOT/image/vmlinuz
-cp -v $HOME/LIVE_BOOT/chroot/boot/initrd.img-*  $HOME/LIVE_BOOT/image/initrd
+cp -v ${HOME}/LIVE_BOOT/chroot/boot/vmlinuz-*     ${HOME}/LIVE_BOOT/image/vmlinuz
+cp -v ${HOME}/LIVE_BOOT/chroot/boot/initrd.img-*  ${HOME}/LIVE_BOOT/image/initrd
 ```
 
 #### 为 grub 创建菜单配置文件
@@ -299,14 +299,14 @@ cp -v $HOME/LIVE_BOOT/chroot/boot/initrd.img-*  $HOME/LIVE_BOOT/image/initrd
 考虑到我们将现场环境编写为可启动媒体的各种方式，这似乎是最便携的解决方案。
 
 ```shell
-vi $HOME/LIVE_BOOT/scratch/grub.cfg
+vi ${HOME}/LIVE_BOOT/scratch/grub.cfg
 ```
 
 ```shell
 insmod all_video
 
 set default="0"
-set timeout="30"
+set timeout="0"
 
 menuentry "Debian_9-x86_64_Live" {
     search --set=root --no-floppy --file /DEBIAN_CUSTOM
@@ -320,7 +320,7 @@ menuentry "Debian_9-x86_64_Live" {
 此文件名必须是唯一的，并且必须与我们的`grub.cfg`配置中的文件名匹配。
 
 ```shell
-touch $HOME/LIVE_BOOT/image/DEBIAN_CUSTOM
+touch "${HOME}/LIVE_BOOT/image/DEBIAN_CUSTOM"
 ```
 
 #### 检查目录及文件
@@ -343,12 +343,12 @@ LIVE_BOOT/image/live/os.squashfs
 #### 创建一个 grub uefi 镜像
 
 ```shell
-grub-mkstandalone                                \
-    --format=x86_64-efi                          \
-    --output=$HOME/LIVE_BOOT/scratch/bootx64.efi \
-    --locales=""                                 \
-    --fonts=""                                   \
-    "boot/grub/grub.cfg=$HOME/LIVE_BOOT/scratch/grub.cfg"
+grub-mkstandalone                                  \
+    --format=x86_64-efi                            \
+    --output=${HOME}/LIVE_BOOT/scratch/bootx64.efi \
+    --locales=""                                   \
+    --fonts=""                                     \
+    "boot/grub/grub.cfg=${HOME}/LIVE_BOOT/scratch/grub.cfg"
 ```
 
 #### 创建包含EFI引导加载程序的FAT16 UEFI引导磁盘映像。
@@ -356,7 +356,7 @@ grub-mkstandalone                                \
 注意使用 mmd 和 mcopy 命令来复制我们命名的 UEFI 引导加载程序 bootx64.efi
 
 ```shell
-cd $HOME/LIVE_BOOT/scratch
+cd ${HOME}/LIVE_BOOT/scratch
 dd if=/dev/zero of=efiboot.img bs=1M count=10
 sudo mkfs.vfat efiboot.img
 mmd -i efiboot.img efi efi/boot
@@ -368,21 +368,21 @@ mcopy -i efiboot.img ./bootx64.efi ::efi/boot/
 ```shell
 grub-mkstandalone                                                           \
     --format=i386-pc                                                        \
-    --output=$HOME/LIVE_BOOT/scratch/core.img                               \
+    --output=${HOME}/LIVE_BOOT/scratch/core.img                             \
     --install-modules="linux normal iso9660 biosdisk memdisk search tar ls" \
     --modules="linux normal iso9660 biosdisk search"                        \
     --locales=""                                                            \
     --fonts=""                                                              \
-    "boot/grub/grub.cfg=$HOME/LIVE_BOOT/scratch/grub.cfg"
+    "boot/grub/grub.cfg=${HOME}/LIVE_BOOT/scratch/grub.cfg"
 ```
 
 #### 结合可引导文件到 cdboot.img
 
 ```shell
-cat                                   \
-    /usr/lib/grub/i386-pc/cdboot.img  \
-    $HOME/LIVE_BOOT/scratch/core.img  \
-    >$HOME/LIVE_BOOT/scratch/bios.img
+cat                                     \
+    /usr/lib/grub/i386-pc/cdboot.img    \
+    ${HOME}/LIVE_BOOT/scratch/core.img  \
+    >${HOME}/LIVE_BOOT/scratch/bios.img
 ```
 
 #### 生成ISO文件
