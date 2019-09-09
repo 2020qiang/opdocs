@@ -262,7 +262,7 @@ EOF
 [[inputs.nginx]]
   urls = ["http://127.0.0.1:81/nginx-status"]
 [[inputs.redis]]
-  servers = ["tcp://127.0.0.1:6379"]
+  servers = ["tcp://127.0.0.1:6379","tcp://127.0.0.1:6380","tcp://127.0.0.1:6381","tcp://127.0.0.1:6382","tcp://127.0.0.1:6383"]
 [[inputs.elasticsearch]]
   servers = ["http://127.0.0.1:9200"]
   http_timeout = "5s"
