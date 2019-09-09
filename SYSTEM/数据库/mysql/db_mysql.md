@@ -18,23 +18,29 @@ systemctl start  mysqld
 systemctl status mysqld
 ```
 
-#### 初始化
+初始化
 
 ```sql
 mysql -u root -p$(grep 'temporary password' /var/log/mysqld.log |tail -n 1 |awk '{print $NF}')
-
 SET GLOBAL validate_password_special_char_count = 0;
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
-
-mysql -u root -p
-CREATE DATABASE dbname;
-GRANT ALL PRIVILEGES ON dbname.* TO 'www'@'10.0.0.0' IDENTIFIED BY 'password';
-GRANT REPLICATION CLIENT ON *.* TO 'status'@'127.0.0.1' IDENTIFIED BY 'password';
-show databases;
-select user,host from mysql.user;
 ```
 
-#### 忘记密码
+权限
+
+```sql
+GRANT ALL PRIVILEGES ON `dbname`.* TO 'www'@'10.2.2.141' IDENTIFIED BY 'password';
+
+GRANT SELECT ON `dbname`.* TO 'peeker'@'%' IDENTIFIED BY 'password';
+GRANT INSERT, DELETE, SELECT, UPDATE ON `dbname`.* TO 'editor'@'%' IDENTIFIED BY 'password';
+
+GRANT REPLICATION CLIENT ON *.* TO 'status'@'127.0.0.1' IDENTIFIED BY 'password';
+GRANT REPLICATION SLAVE ON *.* TO 'slave'@'192.168.%' IDENTIFIED BY 'password';
+```
+
+
+
+## 忘记密码
 
 ```shell
 # 安全模式
