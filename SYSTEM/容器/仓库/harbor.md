@@ -40,8 +40,8 @@ cd harbor/
 # https
 sudo mkdir -vp /opt/harbor/{keys,data}
 cd /opt/harbor/keys
-sudo openssl genrsa -out "./null.pem" 1024
-sudo openssl req -x509 -days 7300 -new -key "./null.pem" -out "./null.crt" -subj '/CN=null'
+sudo openssl genrsa -out "./null.key" 1024
+sudo openssl req -x509 -days 7300 -new -key "./null.key" -out "./null.cert" -subj '/CN=null'
 
 # config
 #  1. 使用域名 
