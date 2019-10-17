@@ -413,3 +413,23 @@ xorriso                                                            \
 ```
 
 > [Create a Custom Debian Live Environment (CD or USB)](https://willhaley.com/blog/custom-debian-live-environment/)
+
+
+
+## 其他
+
+自动登陆TTY
+
+```shell
+sudo vi $(systemctl cat getty@tty1 |head -n 1 |awk '{print $NF}')
+"[Service]"
+"ExecStart=-/sbin/agetty --autologin root --noclear %I $TERM"
+sudo systemctl daemon-reload
+```
+
+清空登陆成功提示信息
+
+```shell
+sudo cp -vf "/dev/null" "/etc/motd"
+```
+
