@@ -202,18 +202,16 @@ if [[ "$(echo ${install_env} |grep telegraf |wc -l)" == "1" ]]; then
     yum localinstall -y https://repos.influxdata.com/rhel/7/x86_64/stable/telegraf-1.5.3-1.x86_64.rpm
     systemctl enable telegraf
 
-    wget -c https://raw.githubusercontent.com/liuq369/Operations/master/script/package/stat -O /etc/telegraf/stat
-    chmod -v 0555 /etc/telegraf/stat
-    cat > /etc/telegraf/config.json << EOF
-[
-    {
-        "name": "newbc",
-        "host": "127.0.0.1",
-        "port": "3306",
-        "user": "status",
-        "pass": "FEybaC8iPMqR3cuFr3ks"
-    }
-]
+    wget -c https://raw.githubusercontent.com/liuq369/tools/master/mysql_status -O /etc/telegraf/mysql_status
+    chmod -v 0555 /etc/telegraf/mysql_status
+    cat > /etc/telegraf/mysql_status.json << EOF
+[{
+    "name": "master",
+    "host": "127.0.0.1",
+    "port": "3306",
+    "user": "status",
+    "pass": "FEybaC8iPMqR3cuFr3ks"
+}]
 EOF
 
     cat > /etc/telegraf/telegraf.conf << EOF
@@ -268,7 +266,7 @@ EOF
   http_timeout = "5s"
 
 [[inputs.exec]]
-  commands = ["/etc/telegraf/stat"]
+  commands = ["/etc/telegraf/mysql_status"]
   timeout = "5s"
   name_suffix = "_mysql"
   data_format = "json"
@@ -292,32 +290,3 @@ find /root /home/* -type f |xargs -n 99 rm -vf
 echo "${hostname}"
 shutdown -r 0
 exit 0
-
-
-
-#
-# 运行的服务
-#
-
-# app
-sudo docker pull e2048.com:5000/app:aws
-sudo docker run -d --restart="on-failure:10" --net="host" -v /opt/www:/opt/www -v /opt/log:/var/log --name "app" e2048.com:5000/app:aws
-
-# cache
-sudo docker pull e2048.com:5000/cache:aws
-sudo docker run -d --restart="on-failure:10" --net="host" -v /opt/log:/var/log --name "cache" e2048.com:5000/cache:aws
-
-# db
-sudo docker pull e2048.com:5000/db:aws
-sudo docker run -d --restart="on-failure:10" --net="host" -v /opt/db:/var/lib/mysql -v /opt/log:/var/log --name "db" e2048.com:5000/db:aws
-
-# socket
-sudo docker pull e2048.com:5000/socket:aws
-sudo docker run -d --restart="on-failure:10" --net="host" --name "socket" e2048.com:5000/socket:aws
-
-# search
-sudo sed -i '/vm.max_map_count/d'          /etc/sysctl.conf
-sudo echo    'vm.max_map_count = 262144' >>/etc/sysctl.conf
-sudo sysctl -p
-sudo docker pull e2048.com:5000/search:aws
-sudo docker run -d --restart="on-failure:10" --net="host" --name "search" e2048.com:5000/search:aws
