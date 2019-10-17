@@ -6,6 +6,11 @@
 # 只包含核心Debian安装程序代码和一小组核心文本模式程序
 # http://cdimage.debian.org/cdimage/unofficial/non-free/cd-including-firmware/archive/9.9.0+nonfree/amd64/iso-cd/firmware-9.9.0-amd64-netinst.iso
 
+# 分区
+# efi  = 100m
+# boot = 250m
+# swap = mem/2
+# root+swap = disk/2
 
 # 安装系统
 # main                           -> Install
