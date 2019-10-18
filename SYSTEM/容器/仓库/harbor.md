@@ -51,12 +51,12 @@ vi harbor.yml
 $(https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md)
 
 # install
-#   with-clair
-#     集成漏洞扫描
-#   with-notary
-#     目的是为了增加开发者对于所使用镜像的安全性，保证所使用的镜像与当初内容提供者是相同
-#     用于发布和管理受信任内容的集合工具，发布者签名，消费者验证内容的完整性和发布者
-sudo ./install.sh --with-clair
+#   --with-clair
+#       集成漏洞扫描
+#   --with-notary
+#       目的是为了增加开发者对于所使用镜像的安全性，保证所使用的镜像与当初内容提供者是相同
+#       用于发布和管理受信任内容的集合工具，发布者签名，消费者验证内容的完整性和发布者
+sudo ./install.sh
 ```
 
 
