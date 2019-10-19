@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 
 
-# 2019/05/15
+# 2019/10/19
 #
 # ssh -q centos@example.com -p 22 'curl -s -L init.liuq.org -o /tmp/init.sh && sudo bash /tmp/init.sh ### ### 0'
+
+Lock="/etc/init_already"
+if [[ -f "${Lock}" ]]; then
+    echo "already init, now exit"
+    exit 1
+fi
+set -x
+set -e
+sudo touch "${Lock}"
+chattr +i "${Lock}"
+unset Lock
+
 
 if [[ "$#" != "3" ]]; then
     echo
@@ -13,8 +25,6 @@ if [[ "$#" != "3" ]]; then
     exit 1
 fi
 
-set -x
-set -e
 hostname="$1"
 password="$2"
 install_env="$3"  # 0:docker:telegraf
@@ -159,8 +169,12 @@ yum install -y bash-completion htop lsof iftop iotop screen wget tree xz zip unz
 
 # 安装 docker
 if [[ "$(echo ${install_env} |grep -w docker |wc -l)" == "1" ]]; then
-    yum install -y docker-io
-    systemctl enable docker
+    yum install -y "docker-io"
+    systemctl enable "docker"
+    mkdir -vp "/root/.docker"
+    chmod -v 0700 "/root/.docker"
+    echo '{"auths":{"docker.e2048.com":{"auth":"cHVsbDpkOThUNWJqQk5keVNUQVd0VlZEUA=="}}}' >"/root/.docker/config.json"
+    chmod -v 0600 "/root/.docker/config.json"
     # systemctl start docker
     # systemctl stop  docker
     # ip addr del 172.17.0.1/16 dev docker0
@@ -286,7 +300,7 @@ cat >> /etc/profile << EOF
 export LC_ALL=en_US.UTF-8
 export PS1='[\u@\h \W]\\$ '
 EOF
-find /root /home/* -type f |xargs -n 99 rm -vf
+find /root /home/* -type f |grep -v '/root/.docker/config.json' |xargs -n 99 rm -vf
 echo "${hostname}"
 shutdown -r 0
 exit 0
