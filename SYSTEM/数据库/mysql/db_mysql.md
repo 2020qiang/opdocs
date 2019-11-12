@@ -36,8 +36,8 @@ mysql> select user,host from mysql.user;
 | root          | localhost |  # 特权用户
 | status        | 127.0.0.1 |  # 监控用
 | replication   | 192.168.% |  # 主从复制用
+| peeker        | %         |  # 远程只读用户
 | editor        | %         |  # 远程可写用户
-| peeker        | %         |  # 远程可读用户
 | www           | 10.0.1.8  |  # 生产项目用
 | mysql.session | localhost |
 | mysql.sys     | localhost |
@@ -48,8 +48,8 @@ mysql> select user,host from mysql.user;
 GRANT REPLICATION CLIENT ON *.* TO      'status'@'127.0.0.1' IDENTIFIED BY 'passWord';
 GRANT REPLICATION SLAVE  ON *.* TO 'replication'@'192.168.%' IDENTIFIED BY 'passWord';
 
-GRANT INSERT, DELETE, SELECT, UPDATE ON `dbname`.* TO 'editor'@'%' IDENTIFIED BY 'passWord';
 GRANT                 SELECT         ON `dbname`.* TO 'peeker'@'%' IDENTIFIED BY 'passWord';
+GRANT INSERT, DELETE, SELECT, UPDATE ON `dbname`.* TO 'editor'@'%' IDENTIFIED BY 'passWord';
 
 GRANT ALL PRIVILEGES ON `dbname`.* TO 'www'@'10.0.1.8' IDENTIFIED BY 'passWord';
 ```
