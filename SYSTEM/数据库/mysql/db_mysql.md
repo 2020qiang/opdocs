@@ -29,7 +29,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'passWord';
 权限
 
 ```sql
-mysql> select user,host from mysql.user;
+mysql> SELECT user,host FROM mysql.user;
 +---------------+-----------+
 | user          | host      |
 +---------------+-----------+
