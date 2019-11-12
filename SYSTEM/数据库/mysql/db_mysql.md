@@ -23,19 +23,35 @@ systemctl status mysqld
 ```sql
 mysql -u root -p$(grep 'temporary password' /var/log/mysqld.log |tail -n 1 |awk '{print $NF}')
 SET GLOBAL validate_password_special_char_count = 0;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'passWord';
 ```
 
 权限
 
 ```sql
-GRANT ALL PRIVILEGES ON `dbname`.* TO 'www'@'10.2.2.141' IDENTIFIED BY 'password';
+mysql> select user,host from mysql.user;
++---------------+-----------+
+| user          | host      |
++---------------+-----------+
+| root          | localhost |  # 特权用户
+| status        | 127.0.0.1 |  # 监控用
+| replication   | 192.168.% |  # 主从复制用
+| editor        | %         |  # 远程可写用户
+| peeker        | %         |  # 远程可读用户
+| www           | 10.0.1.8  |  # 生产项目用
+| mysql.session | localhost |
+| mysql.sys     | localhost |
++---------------+-----------+
+8 rows in set (0.00 sec)
 
-GRANT SELECT ON `dbname`.* TO 'peeker'@'%' IDENTIFIED BY 'password';
-GRANT INSERT, DELETE, SELECT, UPDATE ON `dbname`.* TO 'editor'@'%' IDENTIFIED BY 'password';
 
-GRANT REPLICATION CLIENT ON *.* TO 'status'@'127.0.0.1' IDENTIFIED BY 'password';
-GRANT REPLICATION SLAVE ON *.* TO 'slave'@'192.168.%' IDENTIFIED BY 'password';
+GRANT REPLICATION CLIENT ON *.* TO      'status'@'127.0.0.1' IDENTIFIED BY 'passWord';
+GRANT REPLICATION SLAVE  ON *.* TO 'replication'@'192.168.%' IDENTIFIED BY 'passWord';
+
+GRANT INSERT, DELETE, SELECT, UPDATE ON `dbname`.* TO 'editor'@'%' IDENTIFIED BY 'passWord';
+GRANT                 SELECT         ON `dbname`.* TO 'peeker'@'%' IDENTIFIED BY 'passWord';
+
+GRANT ALL PRIVILEGES ON `dbname`.* TO 'www'@'10.0.1.8' IDENTIFIED BY 'passWord';
 ```
 
 
