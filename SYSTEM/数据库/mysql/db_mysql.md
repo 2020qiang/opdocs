@@ -11,11 +11,11 @@ enabled=1
 gpgcheck=1
 gpgkey=https://repo.mysql.com/RPM-GPG-KEY-mysql
 EOF
-yum makecache
-yum install -y mysql-community-client
-systemctl enable mysqld
-systemctl start  mysqld
-systemctl status mysqld
+   yum makecache \
+&& yum install -y mysql-community-client mysql-community-server \
+&& systemctl enable mysqld \
+&& systemctl start  mysqld \
+&& systemctl status mysqld
 ```
 
 初始化
