@@ -10,6 +10,7 @@
 # 10   6 * * *  /etc/init.d/auto-get cronGET all/task_Clear_clearTrialWinOrLose
 # */1  * * * *  /etc/init.d/auto-get cronGET all/task_Wallet_send
 # */10 * * * *  /etc/init.d/auto-get cronGET all/task_Wallet_summary
+# */1  * * * *  /etc/init.d/auto-get cronGET all/task_RedPackGame_sendWelfare
 
 
 #
@@ -49,7 +50,7 @@ GET ()
     local Time="$(date +%s)"
     local logDir="/var/log/${runUser}"
     local logNew="${logDir}/$(date -d @${Time} +%Y%m%d).log"
-    local logDel="${logDir}/$(date -d @${Time} +%Y%m%d --date='60 days ago').log.gz"
+    local logDel="${logDir}/old_$(date -d @${Time} +%Y%m%d --date='60 days ago').log.gz"
 
     local out=$( curl -s \
           --connect-timeout "20" -m "40" \
