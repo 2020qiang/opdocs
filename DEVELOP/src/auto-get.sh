@@ -36,6 +36,13 @@ startCheck ()
     if [[ "$?" != "0" ]]; then
         useradd "${runUser}" -s /bin/false -M >/dev/null 2>&1
     fi
+
+    # 必须的目录
+    local logDir="/var/log/${runUser}"
+    if [[ ! -d "${logDir}" ]]; then
+        mkdir -p "${logDir}"
+        chown "${runUser}:${runUser}" "${logDir}"
+    fi
 }
 
 
@@ -66,7 +73,6 @@ GET ()
     [[ "${status}" != "0" ]] && resCode="error"
 
     # recording
-    [[ ! -d "${logDir}" ]] && mkdir "${logDir}"
     echo "$( date -d @${Time} '+%Y/%m/%d %H:%M:%S' ) ${tag} ${resCode}:$(echo ${out}| wc -m) ${arg}" >>"${logNew}"
 
     # clear old
