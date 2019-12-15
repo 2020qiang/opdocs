@@ -13,6 +13,9 @@
 # */1  * * * *  /etc/init.d/auto-get cronGET all/task_RedPackGame_sendWelfare
 
 
+export runUser="auto-get"
+export runHost="api.local"
+
 #
 # 必须满足的要求
 #
@@ -63,7 +66,7 @@ GET ()
           --connect-timeout "20" -m "40" \
           -H "X-Requested-With:XMLHttpRequest" -H "Content-Type:application/x-www-form-urlencoded" \
           -x "http://127.0.0.1:80" \
-          "api.local/${arg}" 2>/dev/null )
+          "${runHost}/${arg}" 2>/dev/null )
     local status="${?}"
 
     # format
@@ -281,10 +284,7 @@ cronGET ()
 
 ###########################################################
 
-# 必须满足的要求
-export runUser="auto-get"
 startCheck
-
 case "${1}" in
     'start')
 
