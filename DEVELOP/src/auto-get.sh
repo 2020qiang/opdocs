@@ -61,7 +61,9 @@ GET ()
     local Time="$(date +%s)"
     local logDir="/var/log/${runUser}"
     local logNew="${logDir}/$(date -d @${Time} +%Y%m%d).log"
-    local logDel="${logDir}/old_$(date -d @${Time} +%Y%m%d --date='60 days ago').log.gz"
+    local logDel0="${logDir}/old_$(date -d @${Time} +%Y%m%d --date='60 days ago').log.gz"
+    local logDel1="${logDir}/old_$(date -d @${Time} +%Y%m%d --date='60 days ago').log"
+    local logDel2="${logDir}/$(date -d @${Time} +%Y%m%d --date='60 days ago').log"
 
     local out=$( curl -s -k \
           --connect-timeout "20" -m "40" \
@@ -80,7 +82,9 @@ GET ()
     echo "$( date -d @${Time} '+%Y/%m/%d %H:%M:%S' ) ${tag} ${resCode}:$(echo ${out}| wc -m) ${arg}" >>"${logNew}"
 
     # clear old
-    [[ -f "${logDel}" ]] && rm -f "${logDel}"
+    [[ -f "${logDel0}" ]] && rm -f "${logDel0}"
+    [[ -f "${logDel1}" ]] && rm -f "${logDel1}"
+    [[ -f "${logDel2}" ]] && rm -f "${logDel2}"
     # compression
     local old="${logDir}/$(date -d @${Time} +%Y%m%d --date='1 days ago').log"
     if [[ -f "${old}" ]] && [[ ! -f "${old}.gz" ]]; then
