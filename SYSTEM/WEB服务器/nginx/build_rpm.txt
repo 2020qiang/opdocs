@@ -1,4 +1,5 @@
 # 2019/12/17
+# CentOS release 6.10 (Final)
 
 ./configure \
     --prefix=/etc/nginx \
@@ -37,6 +38,7 @@
     --with-stream_realip_module \
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
+    --with-pcre='../pcre-8.32' \
     --with-openssl='../openssl-1.0.2t'
 
   # --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie' \
@@ -62,8 +64,10 @@
 
 wget -c https://www.openssl.org/source/openssl-1.0.2t.tar.gz
 wget -c https://nginx.org/download/nginx-1.16.1.tar.gz
+wget -c https://ftp.pcre.org/pub/pcre/pcre-8.32.tar.gz
 tar -xvf openssl-1.0.2t.tar.gz
 tar -xvf nginx-1.16.1.tar.gz
+tar -xvf pcre-8.32.tar.gz
 cd nginx-1.16.1
 yum install gcc pcre-devel zlib-devel -y
 wget https://liuq.org/org/SYSTEM/WEB服务器/nginx/logrotate.conf
