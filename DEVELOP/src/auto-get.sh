@@ -15,6 +15,7 @@
 
 export runUser="auto-get"
 export runHost="api.local"
+export protocol="http"
 
 #
 # 必须满足的要求
@@ -62,11 +63,11 @@ GET ()
     local logNew="${logDir}/$(date -d @${Time} +%Y%m%d).log"
     local logDel="${logDir}/old_$(date -d @${Time} +%Y%m%d --date='60 days ago').log.gz"
 
-    local out=$( curl -s \
+    local out=$( curl -s -k \
           --connect-timeout "20" -m "40" \
           -H "X-Requested-With:XMLHttpRequest" -H "Content-Type:application/x-www-form-urlencoded" \
-          -x "http://127.0.0.1:80" \
-          "${runHost}/${arg}" 2>/dev/null )
+          -H "Host: ${runHost}" \
+          "${protocol}://127.0.0.1/${arg}" 2>/dev/null )
     local status="${?}"
 
     # format
