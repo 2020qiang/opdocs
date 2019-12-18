@@ -53,15 +53,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
 wget -c https://www.openssl.org/source/openssl-1.0.2t.tar.gz
 wget -c https://nginx.org/download/nginx-1.16.1.tar.gz
 wget -c https://ftp.pcre.org/pub/pcre/pcre-8.32.tar.gz
@@ -180,9 +171,3 @@ fpm -f -s dir -t rpm -n nginx -v 99.1.16.1       \
     nginx_service.sh=/etc/init.d/nginx           \
     nginx_systemd.unit=/usr/lib/systemd/system/nginx.service \
     logrotate.conf=/etc/logrotate.d/nginx
-
-
-
-
-
-
