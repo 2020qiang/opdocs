@@ -1,5 +1,5 @@
-# 2019/12/17
-# CentOS release 6.10 (Final)
+# 2019/12/18
+# CentOS release 6.10 (Final) (为了兼容低版本glibc)
 
 ./configure \
     --prefix=/etc/nginx \
@@ -71,11 +71,27 @@ tar -xvf pcre-8.32.tar.gz
 cd nginx-1.16.1
 yum install gcc pcre-devel zlib-devel -y
 wget https://liuq.org/org/SYSTEM/WEB服务器/nginx/logrotate.conf
-wget https://liuq.org/org/SYSTEM/WEB服务器/nginx/nginx_service.sh
 wget https://liuq.org/org/SYSTEM/WEB服务器/nginx/nginx_systemd.unit
 
 
+cat > ./nginx_service.sh << EOF
+#!/bin/sh
 
+# systemd
+if [[ "\$(ps -e |head -n 2 |tail -n 1 |awk '{print \$NF}')" == "systemd" ]]; then
+    echo "Please use systelctl tool"
+    exit
+fi
+
+# init
+echo '''
+    start:     /usr/sbin/nginx
+    stop:      kill \$(cat /var/run/nginx.pid)
+    status:    ps -ef |grep nginx
+    reload:    /usr/sbin/nginx -s reload
+    testconf:  /usr/sbin/nginx -t
+'''
+EOF
 
 
 
@@ -112,7 +128,10 @@ cat > ./post-install.sh << EOF
 #!/usr/bin/env bash
 
 chmod +x /etc/init.d/nginx
-systemctl daemon-reload
+
+if [[ "\$(ps -e |head -n 2 |tail -n 1 |awk '{print \$NF}')" == "systemd" ]]; then
+    systemctl daemon-reload
+fi
 
 EOF
 chmod +x ./post-install.sh
@@ -121,11 +140,12 @@ chmod +x ./post-install.sh
 cat > ./pre-uninstall.sh << EOF
 #!/usr/bin/env bash
 
-if [[ "$(ps -e |head -n 2 |tail -n 1 |awk '{print $NF}')" == "systemd" ]]; then
+if [[ "\$(ps -e |head -n 2 |tail -n 1 |awk '{print \$NF}')" == "systemd" ]]; then
     systemctl stop nginx
 else
     /etc/init.d/nginx stop
 fi
+
 EOF
 chmod +x pre-uninstall.sh
 
@@ -133,7 +153,7 @@ chmod +x pre-uninstall.sh
 cat > ./post-uninstall.sh << EOF
 #!/usr/bin/env bash
 
-if [[ "$(ps -e |head -n 2 |tail -n 1 |awk '{print $NF}')" == "systemd" ]]; then
+if [[ "\$(ps -e |head -n 2 |tail -n 1 |awk '{print \$NF}')" == "systemd" ]]; then
     systemctl daemon-reload
 fi
 
