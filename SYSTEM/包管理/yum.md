@@ -1,3 +1,7 @@
+# yum
+
+
+
 ## epel源
 
 ```shell
@@ -19,8 +23,7 @@ yum info $(package_name)
 yum search $(package_name)
 
 # 搜索文件名
-yum provides $(file_name)
-repoquery -q --file $(file_name)
+yum whatprovides 'libpcre.so*'
 
 # 安装/卸载 指定包
 yum install $(package_name)
@@ -53,15 +56,15 @@ yum groupinstall -y 'Development Tools' 'Server Platform Development'
 安装
 
 ```shell
-sudo yum install -y ruby-devel gcc make rpm-build rubygems
+yum install -y ruby-devel gcc make rpm-build rubygems
 gem install --no-ri --no-rdoc fpm
-sudo ln -s /usr/local/bin/fpm /usr/bin
 fpm --version
 ```
 
 ##### 常用参数
 
 * `-s`：**指定源类型**
+
   * `dir`：将目录打包成所需要的类型，可以用于源码编译安装的软件包
   * `rpm`：对rpm进行转换
   * `gem`：对rubygem包进行转换
