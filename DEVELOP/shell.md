@@ -1,3 +1,11 @@
+# shell
+
+
+
+#### 扩展属性 <span><a style="color:#808080" href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html" target="_Blank">跳转</a></span>
+
+
+
 ## 判断
 
 数值比较 <span><a style="color:#808080" href="https://linux.die.net/man/1/test" target="_Blank">实际上是对命令test的引用</a></span>
@@ -17,8 +25,8 @@
 | :----------------------: | :-------------------- |
 | `[[ "str1" == "str2" ]]` | str1 是否与 str2 相同 |
 | `[[ "str1" != "str2" ]]` | str1 是否与 str2 不同 |
-|    `[[ -z "str1" ]]`     | str1 的长度是否为 0   |
-|    `[[ -n "str1" ]]`     | str1 的长度是否非 0   |
+|    `[[ -z "str1" ]]`     | str1 的长度为零       |
+|    `[[ -n "str1" ]]`     | str1 的长度不为零     |
 
 文件比较
 
