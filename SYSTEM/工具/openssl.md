@@ -4,9 +4,9 @@
 
 自签名证书（先创建 私钥，然后根据 私钥 生成 公钥。）
 
-```
-openssl genrsa -out null.pem 1024
-openssl req -x509 -days 7300 -new -key null.pem -out null.crt -subj '/CN=null'
+```shell
+openssl genrsa -out null.key 1024
+openssl req -x509 -days 7300 -new -key null.key-out null.crt -subj '/CN=null'
 
 # cat server.crt server.pem >kkkk 合体
 ```
@@ -18,7 +18,7 @@ openssl req -x509 -days 7300 -new -key null.pem -out null.crt -subj '/CN=null'
 
 转换为 pem 格式证书
 
-```
+```shell
 openssl rsa -in private.key -out private.pem
 ```
 
