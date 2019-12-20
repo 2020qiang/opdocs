@@ -6,7 +6,7 @@
 
 ```shell
 openssl genrsa -out null.key 1024
-openssl req -x509 -days 7300 -new -key null.key-out null.crt -subj '/CN=null'
+openssl req -x509 -days 7300 -new -key null.key -out null.crt -subj '/CN=null'
 
 # cat server.crt server.pem >kkkk 合体
 ```
