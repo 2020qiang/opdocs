@@ -227,6 +227,7 @@ simpleStart ()
     simpleWhile "20s" "all/task_WeSend_sendNewInfo" &
     simpleWhile "10s" "all/task_ReportedData_orderReportedQueue" &
     simpleWhile "10s" "all/task_ReportedData_rechargeReportedQueue" &
+    simpleWhile "10s" "all/task_ProxyQueue_entrancePublicMethod" &
     simpleWhile "10s" "all/task_ReGameReported_reGameReportQueue" &
 }
 
