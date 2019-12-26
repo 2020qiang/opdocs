@@ -3,15 +3,14 @@
 
 
 # crontab -l
-# */30 * * * * /etc/init.d/auto-get cronGET all/task_Clear_killOnlinePayOverHalfhour
-# 30   6 * * * /etc/init.d/auto-get cronGET all/task_ReportedData_reportMoney
-# 30   6 * * * /etc/init.d/auto-get cronGET all/task_Clear_clearWinOrLose
-# 30   6 * * * /etc/init.d/auto-get cronGET all/task_Clear_updateTopDew
-# 30   6 * * * /etc/init.d/auto-get cronGET all/task_Clear_clearTrialWinOrLose
-# 0    1 * * * /etc/init.d/auto-get cronGET all/task_ReportedData_kaiyuanWinorlose
-# */1  * * * * /etc/init.d/auto-get cronGET all/task_Wallet_send
-# */10 * * * * /etc/init.d/auto-get cronGET all/task_Wallet_summary
-# */1  * * * * /etc/init.d/auto-get cronGET all/task_RedPackGame_sendWelfare
+# */30 * * * *  /etc/init.d/auto-get cronGET all/task_Clear_killOnlinePayOverHalfhour
+# 10   6 * * *  /etc/init.d/auto-get cronGET all/task_ReportedData_reportMoney
+# 10   6 * * *  /etc/init.d/auto-get cronGET all/task_Clear_clearWinOrLose
+# 10   6 * * *  /etc/init.d/auto-get cronGET all/task_Clear_updateTopDew
+# 10   6 * * *  /etc/init.d/auto-get cronGET all/task_Clear_clearTrialWinOrLose
+# */1  * * * *  /etc/init.d/auto-get cronGET all/task_Wallet_send
+# */10 * * * *  /etc/init.d/auto-get cronGET all/task_Wallet_summary
+# */1  * * * *  /etc/init.d/auto-get cronGET all/task_RedPackGame_sendWelfare
 
 
 export runUser="auto-get"
@@ -114,6 +113,9 @@ newbcRun ()
 
             # 第三次
             GET "13" "all/task_WeSend_sendNewCodeData?code=${1}" &
+            if [[ "$(GET "13" all/task_AgentAction_action?code=${1})" == "1000" ]]; then
+                GET "14" "all/task_AgentAction_actionCommission?code=${1}" &
+            fi
             break
         fi
 
@@ -134,6 +136,9 @@ newbcRun-txffc ()
 
             # 第三次
             GET "23" "all/task_WeSend_sendNewCodeData?code=${1}" &
+            if [[ "$(GET "13" all/task_AgentAction_action?code=${1})" == "1000" ]]; then
+                GET "14" "all/task_AgentAction_actionCommission?code=${1}" &
+            fi
             break
         fi
 
