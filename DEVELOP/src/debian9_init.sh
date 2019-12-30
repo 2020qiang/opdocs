@@ -291,12 +291,16 @@
 
 
 # DNS
-cat > /etc/resolv.conf << EOF
+F="/etc/resolv.conf"
+cat > ${F} << EOF
 nameserver 208.67.222.222
 nameserver 8.8.8.8
 nameserver 114.114.114.114
 EOF
-chattr +i /etc/resolv.conf
+chattr +i ${F}
+F="/etc/NetworkManager/NetworkManager.conf"
+sed -i '/^dns=/d' ${F}
+sed -i '/\[main\]/a\dns=none' ${F}
 
 # 软件源
 cat > /etc/apt/sources.list << EOF
@@ -313,7 +317,7 @@ software_list='''
     locales ttf-wqy-microhei ttf-wqy-zenhei
     vim bash-completion htop wget curl tree axel xsel xterm apt-file unzip bc
     xclip git-core iotop build-essential gparted iftop unrar redis-tools mariadb-client
-    xpad leafpad lightdm terminator sshpass keepassx dia gpick feh exfat-fuse exfat-utils
+    xpad leafpad lightdm terminator sshpass keepassx dia gpick feh exfat-fuse exfat-utils meld
     chromium chromium-l10n firefox-esr firefox-esr-l10n-zh-cn
     xfce4 xfce4-power-manager xfce4-power-manager-plugins xfce4-screenshooter
     xfwm4-theme-breeze xfwm4-themes
@@ -326,18 +330,47 @@ unset software_list
 apt-get --purge autoremove -y nano xfce4-notifyd
 apt-get clean
 
-exit
 
-# DNS
-rm -vrf /etc/resolv.conf
-cat > /etc/resolv.conf << EOF
-nameserver 208.67.222.222
-nameserver 8.8.8.8
-nameserver 114.114.114.114
+
+# 语言
+cat > /etc/default/locale << EOF
+LANG="zh_CN.UTF-8"
+LANGUAGE="zh_CN.UTF-8"
 EOF
-vi /etc/NetworkManager/NetworkManager.conf
-并将其添加到该[main]部分：
-dns=none
+cat > /root/.bashrc << EOF
+export LC_ALL=C
+EOF
+chmod +x /root/.bashrc
+
+# vi
+cat > /usr/share/vim/vimrc << EOF
+autocmd BufEnter * set mouse=
+set expandtab
+set tabstop=4
+set hlsearch
+set ignorecase
+set smartcase
+EOF
+
+# 终端
+F="/home/$(ls /home)/.config/terminator/config"
+mkdir -vp "$(dirname $F)"
+wget "https://raw.githubusercontent.com/liuq369/tools/master/config/terminator.txt" -O "${F}"
+
+# 快速开机
+F="/etc/default/grub"
+sed -i '/^GRUB_TIMEOUT/d' ${F}
+lent="$(grep -E '^GRUB_DEFAULT=.+' ${F} |head -n 1 |awk -F ':' '{print $1}')"
+sed -i "${lent} a GRUB_TIMEOUT=0" ${F}
+unset lent
+update-grub
+update-grub2
+
+
+
+
+
+exit
 
 
 # 开启tab按键补全
@@ -349,32 +382,6 @@ vi /etc/bash.bashrc
 vi /etc/lightdm/lightdm.conf
 autologin-user=liuq369
 
-# 快速开机
-vi /etc/default/grub
-GRUB_TIMEOUT=0
-update-grub
-update-grub2
-
-
-# 编辑器
-cat > /usr/share/vim/vimrc << EOF
-autocmd BufEnter * set mouse=
-set expandtab
-set tabstop=4
-set hlsearch
-set ignorecase
-set smartcase
-EOF
-
-# 语言
-cat > /etc/default/locale << EOF
-LANG="zh_CN.UTF-8"
-LANGUAGE="zh_CN.UTF-8"
-EOF
-cat > .bashrc << EOF
-export LC_ALL=C
-EOF
-chmod +x .bashrc
 
 
 # xpad
@@ -391,8 +398,6 @@ Preferences
     全部取消
     钩上 删除标签确定
     
-
-
 
 rm -rf /home/liuq369/*
 
