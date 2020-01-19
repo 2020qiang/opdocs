@@ -1,5 +1,3 @@
-[https://github.com/influxdata](https://github.com/influxdata)
-
 TICK 是 influxdata 公司搞的一套开源监控软件栈 Telegraf, InfluxDB, Chronograf, Kapacitor 的缩写，分别与 Graphite 架构中的数据采集、存储、展示和告警模块对应，且与主流 Graphite 生态兼容。TICK 的核心在于 InfluxDB，一个高效且功能丰富的时间序列数据库；而 Chronnograf 与 Kapacitor 则相对没有那么惊艳；如果不考虑对 InfluxDB 的原生支持，Telegraf 也没有太突出的特点。
 
 
@@ -133,11 +131,25 @@ password = "qweQWE123"
 
 测试是否获取数据
 
+```shell
+telegraf -input-filter system -test
+# [or]
+telegraf -config /etc/telegraf/telegraf.conf -input-filter system -test
 ```
-# telegraf -input-filter system -test
-[or]
-# telegraf -config /etc/telegraf/telegraf.conf -input-filter system -test
+
+自定义监控数据
+
+```shell
+#  https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md
+[[inputs.exec]]
+  commands = ["/etc/telegraf/defunct.sh"]
+  timeout = "5s"
+  name_suffix = "_defunct" # 指标名
+  data_format = "" # 常用 value/json
+  data_type = ""   # 常用 integer/float
 ```
+
+
 
 
 
@@ -198,3 +210,7 @@ Chronograf是一个图形和可视化应用程序，它提供了可视化监控�
 现在，您可以通过在`Web`浏览器中访问`http://192.168.11.40:8888`访问Chronograf界面
 
 
+
+>   官方文档 <https://docs.influxdata.com>
+>
+>   项目地址 <https://github.com/influxdata>
