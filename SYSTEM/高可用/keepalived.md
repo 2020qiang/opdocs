@@ -2,13 +2,21 @@
 
 ![](img/img2.png)
 
-#### 环境
+## 环境
 
 * 抢占模式和非抢占模式
   * 抢占模式即 MASTER 从故障中恢复后，会将 VIP 从 BACKUP 节点中抢占过来
   * 非抢占模式即 MASTER 恢复后不抢占 BACKUP 升级为 MASTER 后的 VIP
 
-# 以下为抢占模式
+```shell
+yum install keepalived
+```
+
+
+
+
+
+## 抢占模式
 
 * nginx 1
   * IP：192.168.6.4
@@ -24,10 +32,6 @@
 ### nginx 1
 
 MASTER 机
-
-```
-# yum install keepalived -y
-```
 
 配置 keepalived.conf
 
@@ -64,10 +68,6 @@ vrrp_instance VI_1 {
 ### nginx 2
 
 BACKUP 机
-
-```
-yum install keepalived -y
-```
 
 配置 keepalived.conf
 
@@ -191,9 +191,18 @@ chkconfig keepalived on
 
 ---
 
-#### 不抢占模式：
 
-不配置权重
+
+
+
+## 非抢占模式
+
+1. `state` 都设置为 BACKUP
+2. 添加 `nopreempt` 选项
+
+
+
+
 
 > [http://www.jianshu.com/p/da26df4f7d60](http://www.jianshu.com/p/da26df4f7d60)  
 > [https://my.oschina.net/xshuai/blog/917097](https://my.oschina.net/xshuai/blog/917097)  
