@@ -2,9 +2,22 @@
 
 是一个大尺度分布式文件系统，它是各种不同的存储服务器之上的组合
 
-分布式算法：<https://docs.gluster.org/en/latest/Administrator%20Guide/Setting%20Up%20Volumes/>
+分布式算法 <https://docs.gluster.org/en/latest/Administrator%20Guide/Setting%20Up%20Volumes/>
 
-命令列表：<https://docs.gluster.org/en/latest/CLI-Reference/cli-main/>
+命令列表 <https://docs.gluster.org/en/latest/CLI-Reference/cli-main/>
+
+
+
+### 安装
+
+<https://wiki.centos.org/SpecialInterestGroup/Storage/gluster-Quickstart>
+
+```shell
+   sudo yum install centos-release-gluster \
+&& sudo yum install glusterfs-server glusterfs glusterfs-fuse
+```
+
+
 
 环境
 
