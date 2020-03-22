@@ -14,7 +14,9 @@
 
 ```shell
    sudo yum install centos-release-gluster \
-&& sudo yum install glusterfs-server glusterfs glusterfs-fuse
+&& sudo yum install glusterfs-server glusterfs glusterfs-fuse \
+&& sudo systemctl enable glusterd glusterfsd \
+&& sudo systemctl start glusterd glusterfsd
 ```
 
 
