@@ -3,7 +3,16 @@
 
 # 2019/10/19
 #
-# ssh -q centos@example.com -p 22 'curl -s -L init.liuq.org -o /tmp/init.sh && sudo bash /tmp/init.sh ### ### 0'
+# ssh -q centos@example.com -p 22 'curl -s -o /tmp/init.sh init.todb.nl -L && sudo bash /tmp/init.sh ### ### 0'
+
+if [[ "$#" != "3" ]]; then
+    echo
+    echo 'need 1=${hostname} 2=${password} 3=${install_env}'
+    echo '${install_env}=0:docker:telegraf:iptables'
+    echo
+    exit 1
+fi
+
 
 Lock="/etc/init_already"
 if [[ -f "${Lock}" ]]; then
@@ -17,17 +26,9 @@ chattr +i "${Lock}"
 unset Lock
 
 
-if [[ "$#" != "3" ]]; then
-    echo
-    echo 'need 1=${hostname} 2=${password} 3=${install_env}'
-    echo '${install_env}=0:docker:telegraf:iptables'
-    echo
-    exit 1
-fi
-
-hostname="$1"
-password="$2"
-install_env="$3"  # 0:docker:telegraf
+hostname="${1}"
+password="${2}"
+install_env="${3}"  # 0:docker:telegraf
 
 # 主机名
 hostnamectl --static set-hostname "${hostname}"
