@@ -409,9 +409,17 @@ sql> RESET MASTER;
 sql> RESET SLAVE;
 sql> RESET SLAVE ALL;
 
-Row模式下解析binlog日志
-sql> mysqlbinlog --base64-output="decode-rows" -v mysql-bin.000001 >txt
-sql> mysqlbinlog --start-datetime='2018-09-30 23:45:00'  --stop-datetime='2018-10-01 00:05:15' -vv binlog.000007 > mysql-binlog-2345-05
+-- Row模式下解析binlog日志
+--  @1 不显示二进制部分
+--  @2 开始时间
+--  @3 结束时间
+--  @4 不显示多余的事件信息
+--  @5 binlog文件
+--  @6 输出解析后的日志
+mysqlbinlog --base64-output="decode-rows"   \
+    --start-datetime='2020-04-08 00:00:00'  \
+    --stop-datetime='2020-04-08 04:00:00'   \
+    -v mysql-bin.000014 >mysql-bin.000014.log
 ```
 
 ---
