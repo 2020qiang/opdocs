@@ -20,7 +20,7 @@
 
 例如：
 
-```
+```nginx
 if ( $http_user_agent ~ MSIE) {
     rewrite ^(.*)$ /msie/$1 break;
 }
