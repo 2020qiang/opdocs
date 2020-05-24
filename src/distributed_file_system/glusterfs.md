@@ -15,10 +15,11 @@
 *   官方源 <https://wiki.centos.org/SpecialInterestGroup/Storage/gluster-Quickstart>
 
 ```shell
-   sudo yum install centos-release-gluster \
-&& sudo yum install glusterfs-server glusterfs glusterfs-fuse \
+   sudo yum install -y centos-release-gluster \
+&& sudo yum install -y glusterfs-server glusterfs glusterfs-fuse \
 && sudo systemctl enable glusterd glusterfsd \
-&& sudo systemctl start  glusterd glusterfsd
+&& sudo systemctl start  glusterd glusterfsd \
+&& sudo systemctl status glusterd glusterfsd
 ```
 
 
@@ -28,30 +29,34 @@
 ## 配置
 
 ```shell
-# [server]
-mkdir /opt/www-image
-gluster peer probe 192.168.69.51
-gluster peer probe 192.168.69.23
-gluster peer probe 192.168.69.24
+mkdir "/opt/.www-images"
+gluster peer probe 192.168.56.101
+gluster peer probe 192.168.56.102
+gluster peer probe 192.168.56.103
 #gluster peer status
 #gluster peer detach
 
-gluster volume create www-images replica 3 192.168.69.51:/opt/www-image 192.168.69.23:/opt/www-image 192.168.69.24:/opt/www-image force
+gluster volume create www-images replica 3 \
+    192.168.56.101:/opt/.www-images \
+    192.168.56.102:/opt/.www-images \
+    192.168.56.103:/opt/.www-images \
+    force
 #gluster volume delete www-images
 gluster volume start www-images
 gluster volume info
-
-# [client]
-mount -t glusterfs 192.168.69.51:www-image /opt/www/Uploads
 ```
 
-自动挂载
+挂载
 
 ```shell
 # [client]
 vi /etc/fstab
-#192.168.69.51:www-image /opt/www/Uploads  glusterfs  defaults 0 0
+#192.168.56.101:www-images /opt/www/images  glusterfs  defaults 0 0
 mount -a
+
+# or
+
+mount -t glusterfs 192.168.56.101:www-images /opt/www/images
 ```
 
 
@@ -64,30 +69,26 @@ mount -a
 
 第一步：在卷中移除指定的主机
 
-创建时
-
-```
+```shell
+# 创建时
 gluster volume create       www-images replica 2 192.168.69.51:/opt/www-image 192.168.69.24:/opt/www-image force
-```
 
-现在移除 192.168.69.51
-
-```
+# 现在移除 192.168.69.51
 gluster volume remove-brick www-images replica 1                              192.168.69.24:/opt/www-image force
 ```
 
 第二步：移除池中的主机
 
-```
-rm -vrf /var/lib/glusterd/peers/*
-systemctl  stop  glusterd glusterfsd
-systemctl  start glusterd glusterfsd
-systemctl status glusterd glusterfsd
+```shell
+sudo rm -vrf /var/lib/glusterd/peers/*
+sudo systemctl  stop  glusterd glusterfsd
+sudo systemctl  start glusterd glusterfsd
+sudo systemctl status glusterd glusterfsd
 ```
 
 第三步：移除卷
 
-```
-gluster volume delete www-images
+```shell
+sudo gluster volume delete www-images
 ```
 
