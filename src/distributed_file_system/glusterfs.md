@@ -2,59 +2,30 @@
 
 是一个大尺度分布式文件系统，它是各种不同的存储服务器之上的组合
 
-分布式算法 <https://docs.gluster.org/en/latest/Administrator%20Guide/Setting%20Up%20Volumes/>
+*   分布式算法 <https://docs.gluster.org/en/latest/Administrator%20Guide/Setting%20Up%20Volumes/>
 
-命令列表 <https://docs.gluster.org/en/latest/CLI-Reference/cli-main/>
+*   命令列表 <https://docs.gluster.org/en/latest/CLI-Reference/cli-main/>
 
 
 
-### 安装
 
-<https://wiki.centos.org/SpecialInterestGroup/Storage/gluster-Quickstart>
+
+## 安装
+
+*   官方源 <https://wiki.centos.org/SpecialInterestGroup/Storage/gluster-Quickstart>
 
 ```shell
    sudo yum install centos-release-gluster \
 && sudo yum install glusterfs-server glusterfs glusterfs-fuse \
 && sudo systemctl enable glusterd glusterfsd \
-&& sudo systemctl start glusterd glusterfsd
+&& sudo systemctl start  glusterd glusterfsd
 ```
 
 
 
-环境
 
-```
-# [server]
-CentOS7 192.168.100.126/24
-CentOS7 192.168.100.125/24
 
-# [client]
-CentOS7 192.168.100.127/24
-```
-
-安装
-
-```shell
-# [server]
-yum install -y centos-release-gluster7
-yum install -y glusterfs-server
-
-# [client]
-yum install -y centos-release-gluster7
-yum install -y glusterfs glusterfs-fuse
-```
-
-启动
-
-```shell
-# [server]
-systemctl enable glusterd
-systemctl enable glusterfsd
-systemctl start glusterd
-systemctl start glusterfsd
-```
-
-配置
+## 配置
 
 ```shell
 # [server]
@@ -74,17 +45,6 @@ gluster volume info
 mount -t glusterfs 192.168.69.51:www-image /opt/www/Uploads
 ```
 
-测试
-
-```shell
-# [client]
-touch /shareDate/test
-md5sum /shareDate/test
-
-# [server]
-md5sum /shareDate/test
-```
-
 自动挂载
 
 ```shell
@@ -94,4 +54,40 @@ vi /etc/fstab
 mount -a
 ```
 
+
+
+
+
+## 故障处理
+
+*   删除所有GlusterFS相关的卷和主机，但是这些主机是离线状态
+
+第一步：在卷中移除指定的主机
+
+创建时
+
+```
+gluster volume create       www-images replica 2 192.168.69.51:/opt/www-image 192.168.69.24:/opt/www-image force
+```
+
+现在移除 192.168.69.51
+
+```
+gluster volume remove-brick www-images replica 1                              192.168.69.24:/opt/www-image force
+```
+
+第二步：移除池中的主机
+
+```
+rm -vrf /var/lib/glusterd/peers/*
+systemctl  stop  glusterd glusterfsd
+systemctl  start glusterd glusterfsd
+systemctl status glusterd glusterfsd
+```
+
+第三步：移除卷
+
+```
+gluster volume delete www-images
+```
 
