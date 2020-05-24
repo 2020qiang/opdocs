@@ -29,21 +29,21 @@
 ## 配置
 
 ```shell
-mkdir "/opt/.www-images"
-gluster peer probe 192.168.56.101
-gluster peer probe 192.168.56.102
-gluster peer probe 192.168.56.103
-#gluster peer status
-#gluster peer detach
+sudo mkdir -vp "/opt/.www-images/data"
+sudo gluster peer probe 192.168.68.10
+sudo gluster peer probe 192.168.68.11
+sudo gluster peer probe 192.168.68.12
+#sudo gluster peer status
+#sudo gluster peer detach
 
-gluster volume create www-images replica 3 \
-    192.168.56.101:/opt/.www-images \
-    192.168.56.102:/opt/.www-images \
-    192.168.56.103:/opt/.www-images \
+sudo gluster volume create www-images replica 3 \
+    192.168.68.10:/opt/.www-images/data \
+    192.168.68.11:/opt/.www-images/data \
+    192.168.68.12:/opt/.www-images/data \
     force
-#gluster volume delete www-images
-gluster volume start www-images
-gluster volume info
+#sudo gluster volume delete www-images
+sudo gluster volume start www-images
+sudo gluster volume info
 ```
 
 挂载
@@ -51,12 +51,30 @@ gluster volume info
 ```shell
 # [client]
 vi /etc/fstab
-#192.168.56.101:www-images /opt/www/images  glusterfs  defaults 0 0
+#192.168.68.12:www-images /opt/www  glusterfs  defaults 0 0
 mount -a
 
 # or
 
 mount -t glusterfs 192.168.56.101:www-images /opt/www/images
+```
+
+
+
+
+
+## 磁盘配额
+
+<https://docs.gluster.org/en/latest/Administrator%20Guide/Directory%20Quota/>>
+
+*   默认mount后最大是50G
+
+修改为500G
+
+```shell
+sudo gluster volume quota www-images enable
+sudo gluster volume quota www-images limit-usage / 500GB
+sudo gluster volume quota www-images list
 ```
 
 
@@ -71,10 +89,10 @@ mount -t glusterfs 192.168.56.101:www-images /opt/www/images
 
 ```shell
 # 创建时
-gluster volume create       www-images replica 2 192.168.69.51:/opt/www-image 192.168.69.24:/opt/www-image force
+sudo gluster volume create       www-images replica 2 192.168.69.51:/opt/www-image 192.168.69.24:/opt/www-image force
 
 # 现在移除 192.168.69.51
-gluster volume remove-brick www-images replica 1                              192.168.69.24:/opt/www-image force
+sudo gluster volume remove-brick www-images replica 1                              192.168.69.24:/opt/www-image force
 ```
 
 第二步：移除池中的主机
