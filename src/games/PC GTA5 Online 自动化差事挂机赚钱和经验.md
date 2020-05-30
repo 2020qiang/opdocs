@@ -50,32 +50,28 @@
 ;; 保存为ahk后缀文件
 ;; 双击执行
 
-onkey(v)
-{
-    sleep 5 * 1000
-    Send, {%v% down}
-    sleep 100
-    Send, {%v% up}
-}
+MsgBox, 4, 消息, 是否使用浏览器打开文档
+IfMsgBox Yes
+	Run, "https://liuq.org/doc/?/games/PC GTA5 Online 自动化差事挂机赚钱和经验"
 
-message()
-{
-    MsgBox, 4, 消息, 是否使用浏览器打开文档
-    IfMsgBox Yes
-        Run, "https://liuq.org/doc/?/games/PC GTA5 Online 自动化差事挂机赚钱和经验"
+MsgBox, 4, GTA5 Online 挂机, 点击 “是” 之后，本脚本将自动允许，须10秒内鼠标激活到游戏窗口
+IfMsgBox NO
+	Exit
 
-    MsgBox, 4, GTA5 Online 挂机, 点击 “是” 之后，本脚本将自动允许，须10秒内鼠标激活到游戏窗口
-    IfMsgBox NO
-        Exit
-
-    sleep 10 * 1000
-}
-message()
-
+sleep 10 * 1000
 loop
 {
-    onkey("w")
-    onkey("enter")
+    Send, {w down}
+    sleep 100
+    Send, {w up}
+    
+    sleep 200
+    
+    Send, {Enter down}
+    sleep 100
+    Send, {Enter up}
+    
+	sleep 15 * 1000
 }
 ```
 
