@@ -3,6 +3,7 @@
 1.  安装工具 <https://www.autohotkey.com/download/ahk-install.exe>
 2.  保存下面脚本到桌面，并执行
 3.  进入游戏后，需要一键吃零食就按键盘 e 按键
+4.  记得经常去助理那补充零食
 
 
 
