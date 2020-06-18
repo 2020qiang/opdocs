@@ -27,6 +27,9 @@
 #     用telegraf每5秒触发，日志只分析一秒
 #     为什么不分析日志5秒：不好处理格式，需要时也能优化
 
+echo '"/Transaction/dealTransaction?id=15924453704279175205&ad"min=dayu": 4' | sed 's/\?.*;/;/g' | sed
+
+exit
 
 case "${1}" in
 "base")
@@ -56,6 +59,6 @@ tail -n 100000 "${nginx_log}" | # 为了性能
     grep -F ' POST ' | # 只关注POST
     grep -F "${tag}" | # 获取上一秒的完整信息
     awk -F '"' '{print $2" "$(NF-1)}' | awk "${format}" | # 简单获取key
-    sed 's/\?.*;/;/g' | sed 's/\?.*"/"/g' | # 移除http请求路径参数信息（通常像 GET /path/id?u=100 改为 /path/id）
+    sed 's/\?.*;/;/g' | sed 's/\?.*": /": /g' | # 移除http请求路径参数信息（通常像 GET /path/id?u=100 改为 /path/id）
     sort | uniq -c | sort -n | # 统计频率
     awk '{print "    \""$2"\": "$1","}' | sed '1i\{' | sed '$s/,$/\n}/' # 格式化为json (telegraf推荐的数据格式)
