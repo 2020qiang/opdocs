@@ -9,7 +9,7 @@
 # 配置
 #     /etc/telegraf/telegraf.conf
 #     [[inputs.exec]]
-#       commands = ["/etc/telegraf/request-frequency.sh"]
+#       commands = ["/etc/telegraf/nginx-request-frequency-json.sh"]
 #       timeout = "5s"
 #       name_suffix = "_req"
 #       data_format = "json"
