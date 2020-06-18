@@ -27,9 +27,6 @@
 #     用telegraf每5秒触发，日志只分析一秒
 #     为什么不分析日志5秒：不好处理格式，需要时也能优化
 
-echo '"/Transaction/dealTransaction?id=15924453704279175205&ad"min=dayu": 4' | sed 's/\?.*;/;/g' | sed
-
-exit
 
 case "${1}" in
 "base")
