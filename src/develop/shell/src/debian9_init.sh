@@ -293,14 +293,11 @@
 # DNS
 F="/etc/resolv.conf"
 cat > ${F} << EOF
-nameserver 208.67.222.222
 nameserver 8.8.8.8
-nameserver 114.114.114.114
+nameserver 8.8.4.4
 EOF
 chattr +i ${F}
-F="/etc/NetworkManager/NetworkManager.conf"
-sed -i '/^dns=/d' ${F}
-sed -i '/\[main\]/a\dns=none' ${F}
+
 
 # 软件源
 cat > /etc/apt/sources.list << EOF
@@ -314,7 +311,7 @@ apt-get update
 apt-get upgrade -y
 apt-get dist-upgrade -y
 software_list='''
-    locales ttf-wqy-microhei ttf-wqy-zenhei
+    locales ttf-wqy-microhei ttf-wqy-zenhei sudo
     vim bash-completion htop wget curl tree axel xsel xterm apt-file unzip bc
     xclip git-core iotop build-essential gparted iftop unrar redis-tools mariadb-client
     xpad leafpad lightdm terminator sshpass keepassx dia gpick feh exfat-fuse exfat-utils meld
@@ -329,6 +326,8 @@ echo "${software_list}" |xargs -n 99 apt-get install -y
 unset software_list
 apt-get --purge autoremove -y nano xfce4-notifyd
 apt-get clean
+
+exit
 
 
 
