@@ -1,7 +1,6 @@
 * 目的： Windows10 数据安全
 * 要求：
   * Windows10 要有 BitLocker 功能
-  * PC 至少有一个 USB 2.0 及以上接口
   * YubiKey 有 PIV(smart card) 功能
 
 
@@ -29,6 +28,11 @@
 
 
 ## 加密数据盘
+
+解密方式：
+
+* 开机自动解密： 系统盘要开启 BitLocker，BitLocker 配置自动解密
+* 手动密钥PIN解密
 
 
 
@@ -64,6 +68,26 @@ Windows Registry Editor Version 5.00
 三、启用 BitLocker + smart card
 
 * 右键磁盘  ->  启用 BitLocker  ->  使用智能卡
+
+
+
+
+
+## 加密系统盘
+
+* 加密 C 盘
+
+* 允许使用 PIN
+  * 运行 gpedit.msc 组策略
+  * 计算机配置  ->  管理模板  ->  Windows组件  ->  BitLocker加密  ->  操作系统驱动器
+  * 启动时需要附加身份验证
+  * 有 TPM 时允许 PIN
+* 设置 PIN
+  * 控制面板搜索 BitLocker
+  * 进入 管理 BitLocker  ->  更改在启动时解锁驱动器的方式  ->  输入 PIN
+  * 最长20位数字
+* YubiKey 设置 PIN
+  * Applications  ->  OTP  ->  Configure  ->  Static Password
 
 
 
