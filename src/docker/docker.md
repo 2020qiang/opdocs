@@ -11,9 +11,12 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 # docker-compose
-sudo yum install -y python2-pip
-sudo pip install --upgrade pip
-sudo pip install docker-compose
+sudo curl -s -L \
+    "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" \
+    -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose version
 ```
 
 
