@@ -91,9 +91,9 @@
 
 
 
-1. 更改默认的管理口令![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_21-58-28.png)
-2. 更改默认的PIN![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_21-59-57.png)
-3. 生成RSA自签名证书（BitLocker不支持ECCP）![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-07-02.png)
+1. 更改默认的管理口令![](Windows加密.img/image_2020-07-18_21-58-28.png)
+2. 更改默认的PIN![](Windows加密.img/image_2020-07-18_21-59-57.png)
+3. 生成RSA自签名证书（BitLocker不支持ECCP）![](Windows加密.img/image_2020-07-18_22-07-02.png)
 
 
 
@@ -127,8 +127,8 @@ Windows Registry Editor Version 5.00
 * BitLocker默认加密强度为AES128，可更改为AES256
 * Win+R 运行 gpedit.msc（组策略）
 
-1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-16-40.png)
-2. 对于 系统盘和固定数据盘 使用XTS，可移动盘使用CBC，为了兼容![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-19-35.png)
+1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密![](Windows加密.img/image_2020-07-18_22-16-40.png)
+2. 对于 系统盘和固定数据盘 使用XTS，可移动盘使用CBC，为了兼容![](Windows加密.img/image_2020-07-18_22-19-35.png)
 
 
 
@@ -137,8 +137,8 @@ Windows Registry Editor Version 5.00
 * BitLocker启用TPM+私钥+PIN的验证方式
 * Win+R 运行 gpedit.msc（组策略）
 
-1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密 - 操作系统驱动器![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-59-06.png)
-2. 启用就好，其他选项使用默认![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_23-00-08.png)
+1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密 - 操作系统驱动器![](Windows加密.img/image_2020-07-18_22-59-06.png)
+2. 启用就好，其他选项使用默认![](Windows加密.img/image_2020-07-18_23-00-08.png)
 
 
 
