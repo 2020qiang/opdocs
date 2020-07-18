@@ -1,58 +1,115 @@
-* 目的： Windows10 数据安全
-* 要求：
-  * Windows10 要有 BitLocker 功能
-  * YubiKey 有 PIV(smart card) 功能
+## 概述
+
+
+
+加密软件使用 BitLocker
+
+* 微软自家产品，兼容性好
+
+
+
+算法/强度
+
+1. AES 128
+2. AES 256
+
+
+
+有四种方法解锁 BitLocker
+
+1. 仅TPM
+2. TPM+PIN
+3. TPM+私钥
+4. TPM+私钥+PIN
+
+> 不要仅使用TPM，这样会使破坏者拥有此计算机的TPM芯片时就能解密数据
+>
+> 尽量不要只使用PIN，会增加暴力尝试破解的风险
+>
+> 如果使用公私钥方法，最好使用防篡改硬件智能卡，不要使用普通U盘
 
 
 
 
 
-## 第一次配置 YubiKey
-
-操作：
-
-* [YubiKey Manager](<https://www.yubico.com/products/services-software/download/yubikey-manager/>) 到官网下载管理程序并安装
-* 可选： 点击 Interfaces 菜单，只开启 USB PIV
-* 更改默认密码： Applications  ->  PIV  ->  PIN Management
-
-说明：
-
-- PIN： 只能错误3次，之后只能用 PUK 解锁
-- PUK： 只能错误3次，之后只能 Reset
-- Management Key： 管理操作都需要这个密钥
-- Reset： 不需要任何密码验证
-- 官网： [PIN and Management Key](<https://developers.yubico.com/yubikey-piv-manager/PIN_and_Management_Key.html>)
+---
 
 
 
 
 
-## 加密数据盘
-
-解密方式：
-
-* 开机自动解密： 系统盘要开启 BitLocker，BitLocker 配置自动解密
-* 手动密钥PIN解密
+## 防篡改硬件智能卡
 
 
 
-一、YubiKey 生成自签名证书
+优点
 
-操作：
-
-* 启动 YubiKey Manager 程序
-* 进入  Applications  ->  PIV  ->  Certificates
-* 在 Authentication 插槽里， 生成 RSA 自签名证书
-
-说明：
-
-* BitLocker 只支持 RSA 证书
-* 默认有效期只有1年，记得调整
-* 插槽说明 [Certificate slots](<https://developers.yubico.com/PIV/Introduction/Certificate_slots.html>)
+1. 私钥永远不能导出
+2. 物理暴力无法获取私钥
 
 
 
-二、Windows10允许自签名证书
+设备选型
+
+| Nitrokey | 开源硬件和自由软件 | 偏贵 | 额外特性偏少        |
+| :------: | :----------------: | :--: | ------------------- |
+| Yubikey  |   专利硬件和软件   | 便宜 | 支持 U2F/NFC/type-c |
+
+
+
+使用方式
+
+* 日常使用PIN验证身份
+  * PIN通常有长度限制
+  * 为了兼容性，PIN尽量只使用数字
+  * 有很小的尝试次数，超过这个次数，将会锁定PIN
+* 管理口令
+  * 权限很大，甚至可以解锁或更改PIN
+  * 通常没有尝试次数，所以尽量设置复杂，推荐 `[a-zA-z0-9]{10,20}`
+
+> PIN可以设置简单，反正有次数限制
+>
+> 管理口令必须复杂，因为可以无限次尝试口令
+>
+> PIN可以忘记/记错，但是管理密码必须记住，否则数据肯定不能解密了
+>
+> 重置key可不用验证身份哦
+
+
+
+
+
+---
+
+
+
+
+
+### Yubikey 配置
+
+下载管理程序并安装 [YubiKey Manager | Yubico](https://www.yubico.com/products/services-software/download/yubikey-manager/)
+
+
+
+1. 更改默认的管理口令![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_21-58-28.png)
+2. 更改默认的PIN![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_21-59-57.png)
+3. 生成RSA自签名证书（BitLocker不支持ECCP）![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-07-02.png)
+
+
+
+
+
+---
+
+
+
+
+
+## Windows10 配置
+
+
+
+从Windows10开始，BitLocker默认不使用子签名证书，所以需要手动开启
 
 * 保存为 `.reg` 文件并执行
 
@@ -65,36 +122,70 @@ Windows Registry Editor Version 5.00
 
 
 
-三、启用 BitLocker + smart card
+#### 更改加密强度
 
-* 右键磁盘  ->  启用 BitLocker  ->  使用智能卡
+* BitLocker默认加密强度为AES128，可更改为AES256
+* Win+R 运行 gpedit.msc（组策略）
 
-
-
-
-
-## 加密系统盘
-
-* 加密 C 盘
-
-* 允许使用 PIN
-  * 运行 gpedit.msc 组策略
-  * 计算机配置  ->  管理模板  ->  Windows组件  ->  BitLocker加密  ->  操作系统驱动器
-  * 启动时需要附加身份验证
-  * 有 TPM 时允许 PIN
-* 设置 PIN
-  * 控制面板搜索 BitLocker
-  * 进入 管理 BitLocker  ->  更改在启动时解锁驱动器的方式  ->  输入 PIN
-  * 最长20位数字
-* YubiKey 设置 PIN
-  * Applications  ->  OTP  ->  Configure  ->  Static Password
+1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-16-40.png)
+2. 对于 系统盘和固定数据盘 使用XTS，可移动盘使用CBC，为了兼容![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-19-35.png)
 
 
 
+#### 启用高级验证选项
+
+* BitLocker启用TPM+私钥+PIN的验证方式
+* Win+R 运行 gpedit.msc（组策略）
+
+1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密 - 操作系统驱动器![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_22-59-06.png)
+2. 启用就好，其他选项使用默认![](/home/user/.syncFile/Dropbox/files/.doc/opdocs/docs/计算机使用/Windows加密.img/image_2020-07-18_23-00-08.png)
 
 
-> 参考：
->
-> [BitLocker 智能卡自签名证书 – Extrawdw](https://blog.extrawdw.net/computer/windows/bitlocker-smartcard-self-signed-certificates/)
->
-> [Using Smart Cards with BitLocker | Microsoft Docs](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-7/dd875530(v=ws.10))
+
+#### 加密系统盘
+
+* 如果有TPM，默认使用TPM
+* 系统盘较为特殊不能使用智能卡，原因可查看页尾
+* 推荐使用复杂的PIN；不推荐U盘是因为U盘不防病毒程序，病毒可以轻易获取私钥
+* C盘右键 - 启用 BitLocker - 输入PIN
+
+
+
+#### 加密数据盘
+
+- 推荐使用防篡改硬件智能卡，优点在本文章的概述中
+- C盘右键 - 启用 BitLocker - 插入智能卡
+
+
+
+
+
+---
+
+
+
+
+
+## 日常解密
+
+* 开机时需要输入系统盘的PIN（无限尝试次数）
+* 数据盘要插入key，并输入PIN（有限尝试次数）
+
+
+
+
+
+---
+
+
+
+## 参考
+
+* [BitLocker 智能卡自签名证书 – Extrawdw](https://blog.extrawdw.net/computer/windows/bitlocker-smartcard-self-signed-certificates/)
+
+* [Using Smart Cards with BitLocker | Microsoft Docs](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-7/dd875530(v=ws.10))
+
+* [什么是BitLocker驱动器加密？ | Study.com](https://study.com/academy/lesson/what-is-bitlocker-drive-encryption.html)
+
+* [BitLocker为什么不支持预引导身份验证用于智能卡 | Microsoft Docs](https://docs.microsoft.com/en-us/windows/security/information-protection/bitlocker/bitlocker-using-with-other-programs-faq#can-bitlocker-support-smart-cards-for-pre-boot-authentication)
+
