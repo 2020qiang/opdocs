@@ -332,6 +332,34 @@ http {
 
 
 
+#### proxy 反向代理
+
+1. 长超时表示超时由后端控制
+2. 不限制请求体大小，表示由后端控制
+3. 允许后端使用SNI多域名证书
+4. 使用特定的主机名发起请求，一般设置`$host`
+5. 通过`x-forwarded-for`转发客户端IP
+6. 后端地址
+
+```nginx
+server {
+    listen 80;
+    location ~* "^/server/api1$" {
+        proxy_read_timeout 24h;
+        proxy_send_timeout 24h;
+        client_max_body_size 0;
+        proxy_ssl_server_name on;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass https://liuq.org:443;
+    }
+}
+```
+
+
+
+
+
 ---
 
 
