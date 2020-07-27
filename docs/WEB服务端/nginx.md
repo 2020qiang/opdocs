@@ -142,7 +142,7 @@ iptables -t filter -A INPUT -p tcp -m tcp -m multiport --dports 80,443 -m connli
 
 
 
-#### hsts 严格传输安全
+#### hsts 强制https
 
 在一段时间内（下面配置一年），客户端强制默认使用https请求，http会407到https [转到](#官方文档链接)
 
