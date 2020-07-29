@@ -482,3 +482,33 @@ server {
 }
 ```
 
+
+
+
+
+#### 自定义代理
+
+1. 客户端发送自定义请求头`x-data-protocol,x-data-host`，表示代理的后端地址
+
+```nginx
+    server {
+        listen 443 ssl default_server;
+
+        ssl_certificate     /opt/keys/null.crt;
+        ssl_certificate_key /opt/keys/null.key;
+
+        location / {
+            resolver 8.8.8.8 8.8.4.4;
+            proxy_read_timeout 24h;
+            proxy_send_timeout 24h;
+            client_max_body_size 0;
+            proxy_ssl_server_name on;
+            proxy_set_header X-Data-Protocol "";
+            proxy_set_header X-Data-Host "";
+            proxy_set_header Host $http_x_data_host;
+            proxy_pass $http_x_data_protocol://$http_x_data_host;
+        }
+    }
+
+```
+
