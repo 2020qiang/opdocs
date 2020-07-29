@@ -360,6 +360,34 @@ server {
 
 
 
+#### ssl_certificate 使用https
+
+```shell
+# 可选创建自签名证书
+key="/opt/keys/null.key"
+crt="/opt/keys/null.crt"
+openssl genrsa -out ${key} 1024
+openssl req -x509 -days 7300 -new -key ${key} -out ${crt} -subj '/CN=null'
+```
+
+```nginx
+http {
+    ssl_certificate     /opt/keys/null.crt;
+    ssl_certificate_key /opt/keys/null.key;
+}
+```
+
+```nginx
+server {
+    ssl_certificate     /opt/keys/null.crt;
+    ssl_certificate_key /opt/keys/null.key;
+}
+```
+
+
+
+
+
 ---
 
 
