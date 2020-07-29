@@ -388,6 +388,26 @@ server {
 
 
 
+#### header 自定义请求头获取
+
+客户端请求
+
+```shell
+curl -s -v -o /dev/null http://127.0.0.1 -H 'x-data-test1: value'
+```
+
+服务端接收并记录到日志
+
+```nginx
+http {
+    log_format  main  '$http_x_data_test1';
+}
+```
+
+
+
+
+
 ---
 
 
