@@ -1,12 +1,25 @@
-# shell
+
+
+#### 提高安全和可维护性
+
+```shell
+set -euxo pipefail
+```
+
+* `-e` 命令返回值不是0，就退出脚本
+* `-u` 使用未定义的变量，就退出脚本
+* `-x` 执行指令后，会先显示该指令及参数，通常用于调试
+* `-o pipefail` 如果由多个命令用管道连接，`-e` 将没有作用，要用这个才行
+
+> [Bash 脚本 set 命令教程 - 阮一峰的网络日志](http://www.ruanyifeng.com/blog/2017/11/bash-set.html)
 
 
 
-#### 扩展属性 <span><a style="color:#808080" href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html" target="_Blank">跳转</a></span>
 
 
 
-## 判断
+
+#### 判断
 
 数值比较 <span><a style="color:#808080" href="https://linux.die.net/man/1/test" target="_Blank">实际上是对命令test的引用</a></span>
 
@@ -43,20 +56,19 @@
 |      `[[ -O "file" ]]`      | 检查 file 是否存在并属当前用户所有         |
 |      `[[ -G "file" ]]`      | 检查 file 是否存在并且默认组与当前用户相同 |
 
+复合条件测试
 
-#### 复合条件测试
-
-###### 是 shell 中的 bool 运算方式
+是 shell 中的 bool 运算方式
 
 -   `[[ condition1 ]] && [[ condition2 ]]`：等于 AND
 -   `[[ condition1 ]] || [[ condition2 ]]`：等于 OR
 
-#### 高级特性
+高级特性
 
 -   用于数学表达式的双括号
 -   用于高级字符串的双方括号
 
-##### 双括号
+双括号
 
 |  符号   | 详细描述 |
 | :-----: | :------- |
@@ -78,7 +90,11 @@
 
 
 
-## 后台/继承
+
+
+
+
+#### 后台、子进程、继承
 
 *   `ttt` 后台运行的函数
 *   `text` 后台函数需要的变量
@@ -88,8 +104,7 @@
 ```shell
 #!/usr/bin/env bash
 
-ttt ()
-{
+ttt() {
     echo "${T}"
 }
 T="text"
@@ -107,11 +122,13 @@ export -f ttt
 
 
 
-## 加减乘除
 
-#### 基本算数操作
 
-###### 不支持小数、不支持负数
+#### 加减乘除
+
+基本算数操作
+
+不支持小数、不支持负数
 
 ```shell
 #!/usr/bin/env bash
@@ -125,9 +142,9 @@ let var++
 let var--
 ```
 
-#### 完整算数操作
+完整算数操作
 
-###### 加减乘除, 四舍五入, 保留两位小数, awk
+加减乘除, 四舍五入, 保留两位小数, awk
 
 ```shell
 #!/usr/bin/env bash
@@ -146,7 +163,7 @@ printf( "%.2f\n", a4 + 0.005 )
 echo "${var}"
 ```
 
-###### 五舍六入, 保留两位小数, bc
+五舍六入, 保留两位小数, bc
 
 ```shell
 #!/usr/bin/env bash
@@ -173,6 +190,10 @@ var="$(printf "%.2f" "$(echo ${var0})")"
 
 
 
+
+
+
+
 #### 进制转换
 
 ```shell
@@ -182,6 +203,12 @@ $ echo " obase=2; 254 " |bc
 echo " obase=10; ibase=2; 11111110 " |bc
 254
 ```
+
+
+
+
+
+
 
 #### 平方 / 平方根
 
@@ -195,7 +222,21 @@ echo " sqrt(16) " |bc
 
 
 
-## 特殊环境变量
+
+
+
+
+#### 变量的扩展属性
+
+> [Shell Parameter Expansion (Bash Reference Manual)](https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html)
+
+
+
+
+
+
+
+#### 特殊环境变量
 
 | `$$` | 当前shell的PID                                       |
 | :--: | ---------------------------------------------------- |
@@ -208,7 +249,11 @@ echo " sqrt(16) " |bc
 
 
 
-## 读取用户输入
+
+
+
+
+#### 读取用户输入
 
 ```shell
 #!/usr/bin/env bash
@@ -223,18 +268,11 @@ printf "My Password is %s !\\n" ${pass}
 
 
 
-## 启用跟踪调试脚本
-
-```shell
-#!/usr/bin/env bash
-
-set -x
-set -v
-```
 
 
 
-## 表明使用的是systemd还是init
+
+#### 检查是systemd还是init
 
 ```shell
 cat /proc/1/comm
@@ -242,7 +280,11 @@ cat /proc/1/comm
 
 
 
-## 文件描述符重定向
+
+
+
+
+#### 文件描述符重定向
 
 是进程对其所打开文件的索引，形式上是个非负整数
 
@@ -266,5 +308,4 @@ echo 123 |tee /log
 ```
 
 >   [`tee`](http://www.gnu.org/software/coreutils/manual/html_node/tee-invocation.html) 命令的作用是在不影响原本`I/O`的情况下，将 `stdout` 复制一份到档案去
-
 
