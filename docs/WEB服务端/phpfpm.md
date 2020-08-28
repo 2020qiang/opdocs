@@ -8,7 +8,7 @@
 
 ```shell
 sudo yum localinstall -y http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-sudo yum --enablerepo=remi-php73 install -y php php-fpm php-mysqlnd php-pecl-redis
+sudo yum --enablerepo=remi-php73 install -y php php-fpm php-mysqlnd php-pecl-redis php-gd
 sudo systemctl enable php-fpm
 php -m |grep -E '(mysql|redis)'
 ```
