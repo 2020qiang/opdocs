@@ -217,7 +217,7 @@ if [[ "$(echo ${install_env} |grep telegraf |wc -l)" == "1" ]]; then
     yum localinstall -y https://repos.influxdata.com/rhel/7/x86_64/stable/telegraf-1.5.3-1.x86_64.rpm
     systemctl enable telegraf
 
-    wget -c https://download.todb.nl/init.todb.nl/mysql_status -O /etc/telegraf/mysql_status
+    wget -c https://download.ikk.icu/init.todb.nl/mysql_status -O /etc/telegraf/mysql_status
     chmod -v 0555 /etc/telegraf/mysql_status
     cat > /etc/telegraf/mysql_status.json << EOF
 [{
