@@ -3,7 +3,7 @@
 
 # 2019/10/19
 #
-# ssh -q centos@example.com -p 22 'curl -s -o /tmp/init.sh init.todb.nl -L && sudo bash /tmp/init.sh ### ### 0'
+# ssh -q centos@example.local -p 22 'curl -s -o /tmp/init.sh init.ikk.icu -L && sudo bash /tmp/init.sh ### ### 0'
 
 if [[ "$#" != "3" ]]; then
     echo
