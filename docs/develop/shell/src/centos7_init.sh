@@ -3,7 +3,7 @@
 
 # 2019/10/19
 #
-# ssh -q centos@example.local -p 22 'curl -s -o /tmp/init.sh init.ikk.icu -L && sudo bash /tmp/init.sh ### ### 0'
+# ssh -q centos@example.local -p 22 'curl -s -o /tmp/init.sh init.jjq.icu -L && sudo bash /tmp/init.sh ### ### 0'
 
 if [[ "$#" != "3" ]]; then
     echo
@@ -217,7 +217,7 @@ if [[ "$(echo ${install_env} |grep telegraf |wc -l)" == "1" ]]; then
     yum localinstall -y https://repos.influxdata.com/rhel/7/x86_64/stable/telegraf-1.5.3-1.x86_64.rpm
     systemctl enable telegraf
 
-    wget -c https://download.ikk.icu/init.ikk.icu/mysql_status -O /etc/telegraf/mysql_status
+    wget -c https://download.jjq.icu/init.jjq.icu/mysql_status -O /etc/telegraf/mysql_status
     chmod -v 0555 /etc/telegraf/mysql_status
     cat > /etc/telegraf/mysql_status.json << EOF
 [{
