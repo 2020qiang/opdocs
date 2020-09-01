@@ -214,7 +214,7 @@ unset file
 
 # 安装监控客户端
 if [[ "$(echo ${install_env} |grep telegraf |wc -l)" == "1" ]]; then
-    yum localinstall -y https://repos.influxdata.com/rhel/7/x86_64/stable/telegraf-1.5.3-1.x86_64.rpm
+    yum localinstall -y https://download.todb.nl/influxdata.com/telegraf-1.5.3-1.x86_64.rpm
     systemctl enable telegraf
 
     wget -c https://download.todb.nl/init.todb.nl/mysql_status -O /etc/telegraf/mysql_status
