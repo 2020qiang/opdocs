@@ -313,7 +313,7 @@ apt-get dist-upgrade -y
 software_list='''
     locales ttf-wqy-microhei ttf-wqy-zenhei sudo
     vim bash-completion htop wget curl tree axel xsel xterm apt-file unzip bc
-    xclip git-core iotop build-essential gparted iftop unrar redis-tools mariadb-client
+    xclip git-core iotop build-essential gparted iftop unrar redis-tools mariadb-client filezilla
     xpad leafpad lightdm terminator sshpass keepassx dia gpick feh exfat-fuse exfat-utils meld
     chromium chromium-l10n firefox-esr firefox-esr-l10n-zh-cn
     xfce4 xfce4-power-manager xfce4-power-manager-plugins xfce4-screenshooter
