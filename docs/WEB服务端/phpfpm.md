@@ -2,20 +2,29 @@
 
 
 
-## 安装 php7.3
+## 安装 
 
 官网 <https://tecadmin.net/install-php7-on-centos7/>
 
 ```shell
-sudo yum localinstall -y http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-sudo yum --enablerepo=remi-php73 install -y php php-fpm php-mysqlnd php-pecl-redis php-gd
-sudo systemctl enable php-fpm
+# php7.3
+yum localinstall -y http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+yum --enablerepo=remi-php73 install -y php php-fpm php-mysqlnd php-pecl-redis php-gd
+systemctl enable php-fpm
 php -m |grep -E '(mysql|redis)'
 ```
 
-安装 php7.0
+```shell
+# php7.0（新）
+yum localinstall -y http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+yum --enablerepo=remi-php70 install -y php php-fpm php-mysqlnd php-pecl-redis
+yum --enablerepo=remi-php70 install -y php-gd php-bcmath php-dom php-gmp php-igbinary \
+                                       php-mbstring php-mcrypt php-posix php-soap \
+                                       php-xmlrpc php-zip
+```
 
 ```shell
+# php7.0（旧）
 sudo yum localinstall -y http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 sudo yum localinstall -y https://mirror.webtatic.com/yum/el6/latest.rpm
 sudo yum install -y php70w php70w-fpm php70w-mysql php70w-pecl-redis php70w-xml php70w-soap php70w-xmlrpc php70w-pdo php70w-bcmath php70w-mbstring php70w-gd php70w-mcrypt php70w-pdo_dblib 
