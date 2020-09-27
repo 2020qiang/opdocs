@@ -1,0 +1,14 @@
+{
+    "/nginx": {
+        "title": "nginx",
+        "path": "WEB服务端/nginx.md"
+    },
+    "/phpfpm": {
+        "title": "phpfpm",
+        "path": "WEB服务端/phpfpm.md"
+    },
+    "/mysql": {
+        "title": "mysql",
+        "path": "database/mysql/db_mysql.md"
+    }
+}
