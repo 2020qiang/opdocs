@@ -17,3 +17,11 @@
 ![](about.img/2019-06-Philippines-Boracay-Helicopter.png)
 
 ![](about.img/2019-06-Philippines-Boracay-diving.jpg)
+
+
+
+2019/01 - 香港
+
+![](about.img/2019-01-HongKong-narrow-building.jpg)
+
+![](about.img/2019-01-HongKong-Java-Road.jpg)
