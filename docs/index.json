@@ -1,4 +1,9 @@
 {
+    "/about": {
+        "title": "关于我",
+        "path": "about/about.md",
+        "hide": true
+    },
     "/nginx": {
         "title": "nginx",
         "path": "WEB服务端/nginx.md"
