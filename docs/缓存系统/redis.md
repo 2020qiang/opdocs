@@ -246,6 +246,8 @@ Redis 的 Sentinel 系统用于管理多个 Redis 服务器（instance）， 该
 使用 haproxy 代理到后端的 master redis
 
 ```
+defaults
+    mode tcp
 backend redis
     option tcp-check
     tcp-check connect
