@@ -1,18 +1,18 @@
 ## 主从复制
 
-#### 是异步进行，不影响主线程
+异步进行，不影响主线程
 
-![](/assets/redis-master-slave-async.png)
+![](redis.img/redis-master-slave-async.png)
 
 PSYNC 同步命令
 
-![](/assets/redis-master-slave-psync-progress.png)
+![](redis.img/redis-master-slave-psync-progress.png)
 
 实现原理
 
-![](/assets/redis-master-slave-psync.png)
+![](redis.img/redis-master-slave-psync.png)
 
-主从复制基本过程：
+#### 基本过程
 
 1. slave 启用同步
    1. 或者配置文件写入同步相关配置信息
@@ -174,12 +174,13 @@ repl_backlog_first_byte_offset:0
 repl_backlog_histlen:0
 ```
 
-> 参见
+> [Redis 设计与实现：主从复制 | NingG 个人博客](<https://ningg.top/redis-lesson-8-redis-master-slave/>)
 >
-> ```
-> http://ningg.top/redis-lesson-8-redis-master-slave/
-> http://redisdoc.com/topic/replication.html
-> ```
+> [复制（Replication） &mdash; Redis 命令参考](<http://redisdoc.com/topic/replication.html>)
+
+
+
+
 
 
 
@@ -192,9 +193,75 @@ Redis 的 Sentinel 系统用于管理多个 Redis 服务器（instance）， 该
 * 自动故障迁移（Automatic failover）： 当一个主服务器不能正常工作时， Sentinel 会开始一次自动故障迁移操作， 它会将失效主服务器的其中一个从服务器升级为新的主服务器， 并让失效主服务器的其他从服务器改为复制新的主服务器； 当客户端试图连接失效的主服务器时， 集群也会向客户端返回新主服务器的地址， 使得集群可以使用新主服务器代替失效服务器。
 
 
-![](/assets/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-07.png)
+![](redis.img/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-07.png)
 
 避免 Sentinel 自身单点故障
 
- ![](/assets/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-23.png)
+ ![](redis.img/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-23.png)
+
+
+### AOF
+
+数据持久化比较
+
+* **RDB**：\(默认开启\) 以指定的时间间隔执行数据集的快照
+  * 优点：完美的备份解决方案
+  * 缺点：故障发生后，在两个时间间隔中的某些数据会丢失
+* **AOF**：记录服务器接收的每个写入操作
+  * 优点：准实时持久化，最大可能减少数据丢失的风险
+  * 缺点：占用空间较大，恢复速度较慢
+
+#### 开启 AOF
+
+添加关键配置
+
+```
+1: appendonly                  yes
+2: appendfilename              redis.aof
+3: appendfsync                 everysec
+4: auto-AOF-rewrite-percentage 100
+5: auto-AOF-rewrite-min-size   64mb
+6: aof-load-truncated          yes
+```
+
+1. 开启 AOF
+2. 备份文件名 \(redis.conf 中的 dir 配置指定\)
+3. 同步选择方式：
+   1. **always**：每个事件循环都要将 aof\_buf 缓冲区所有内容同步到 AOF 文件
+      1. 优点：最安全，即使出现故障停机， AOF 持久化也只会丢失一个事件循环中的数据
+      2. 缺点：效率慢，由于每次都会调用 fsync，所以其性能也会受到影响
+   2. **everysec**：每隔超过 1s 就要在子线程中对 AOF 文件进行一次同步
+      1. 优点：较安全，即使出现故障停机， AOF 持久化也只会丢失 1s 前的数据
+      2. 缺点：在最坏的情况下，2s 会进行一次 fsync 操作（调用时长超过1s，会采取延迟的策略，再等 1s）
+   3. **no**：每个事件循环都要将 aof\_buf 缓冲区中的所有内容写入到 OS 缓冲区
+      1. 优点：效率高，仅仅同步至 OS 缓冲区，由 OS 决定何时同步至 AOF 文件
+      2. 缺点：安全差，在系统缓存中积累一段时间的数据才同步至 AOF 文件，默认 30s，异常关机重启会丢失缓冲区数据
+4. AOF 文件大小超过上一次重写时的大小的百分之几
+   1. 刚启动 redis 时，此策略有严重缺陷的，例如：
+      1. 文件的尺寸可以由 1K 变为 2K，1M 变为 2M，但是没有必要重写，所以需要引入另一个参数作为补充
+5. 限制允许重写最小 AOF 文件大小，避免多次重复写入
+6. AOF 持久化文件同步过程中断电宕机，导致文件损坏，这里 yes 表示继续回复，并写入日志
+
+##### 测试
+
+```
+[TEST].~ > redis-cli 
+127.0.0.1:6379> set fg 212
+OK
+127.0.0.1:6379> get fg 
+"212"
+[TEST].~ > sudo service redis restart
+Stopping redis-server:                                     [  OK  ]
+Starting redis-server:                                     [  OK  ]
+[TEST].~ > redis-cli 
+127.0.0.1:6379> get fg
+"212"
+```
+
+> [为什么我们不使用Redis做存储数据库？ - On the road](http://blog.qiusuo.im/blog/2015/02/05/why-not-use-redis-as-db/)  
+>
+> [Redis Persistence – Redis](https://redis.io/topics/persistence)
+>
+> [AOF 持久化的实现 &mdash; Redis 设计与实现](http://redisbook.com/preview/aof/aof_implement.html)
+
 

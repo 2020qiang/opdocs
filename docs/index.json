@@ -10,5 +10,9 @@
     "/mysql": {
         "title": "mysql",
         "path": "database/mysql/db_mysql.md"
+    },
+    "/redis": {
+        "title": "redis",
+        "path": "缓存系统/redis.md"
     }
 }
