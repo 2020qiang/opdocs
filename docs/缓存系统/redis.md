@@ -1,3 +1,17 @@
+## 安装
+
+```shell
+yum localinstall -y "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
+yum --enablerepo="remi" install -y redis
+# /etc/init.d/redis start
+```
+
+
+
+
+
+
+
 ## 主从复制
 
 异步进行，不影响主线程
@@ -63,68 +77,19 @@ PSYNC 同步命令
 
 无论何时，数据安全都是极其重要的，所以应该禁止主服务器关闭持久化的同时自动拉起。
 
-#### 配置
+#### 配置 v 6.0.8
 
 ```
-####
-#### 主从复制 ###
-####
-
 # 主ip port
-slaveof 192.168.68.42 63790
-# masterauth <master-password>
-
-# yes 则slave仍然会回复client请求， 尽管数据可能会出现过期或者如果这是第一次同步，数据集可能为空
-# no 则从机将回复错误“SYNC with master in progress”到所有类型的命令，除了 INFO和SLAVEOF 命令
-slave-serve-stale-data no
-
-# 只读从服务器
-slave-read-only yes
-
-# no 磁盘备份，Redis主设备创建一个将RDB文件写入磁盘的新进程。之后，文件被父进程传递给从服务器
-# yes 无盘复制，Redis master创建一个新的进程，直接将RDB文件写入从套接字，而不用接触磁盘
-repl-diskless-sync yes
-
-# 启用无盘复制，可以配置服务器下一次复制等待的延迟时间 秒
-repl-diskless-sync-delay 5
-
-# 从机以时间间隔向服务器发送PING指令
-repl-ping-slave-period 10
-
-# 复制超时（SYNC期间批量传输I/O，master站data pings超时，master站REPLCONF ACK pings超时）
-repl-timeout 60
-
-# yes 使用较少数量的TCP数据包和较少的带宽向从站发送数据，会增加数据在slave端出现的延迟，导致数据不一致，linux kernel 默认最多可延迟 40ms
-# no  slave端数据的延迟将会减少，但使用更多的带宽将被用于复制
-repl-disable-tcp-nodelay no
-
-# 复制缓冲区大小，用来保存最新复制的命令，只有在有slave连接的时候才分配内存
-# slave断线重连时，如果可以执行部分同步，只需要把缓冲区的部分数据复制给slave，就能恢复正常复制状态
-# 稍微大也没关系
-repl-backlog-size 10mb
-
-# slave断线之后缓冲区数据的存活时间秒，0表示永不释放
-repl-backlog-ttl 3600
-
-# master选举号码，数字最低的slave将成为master，0表示永远不能提升为master
-slave-priority 10
-
-# 至少需要多少个slave在线，mater就禁止写入，0为禁用
-# 延迟小于min-slaves-max-lag秒的slave才认为是健康的slave
-min-slaves-to-write 0
-min-slaves-max-lag  0
-
-# 端口转发或地址转换（NAT）网络环境中，需要向master申明自己的ip和端口
-#slave-announce-ip 5.5.5.5
-#slave-announce-port 1234
+replicaof <masterip> <masterport>
 ```
 
 #### 检查
 
-```
-$ redis-cli -h 127.0.0.1 -p 6381 info Replication
-$ redis-cli -h 127.0.0.1 -p 6382 info Replication
-$ redis-cli -h 127.0.0.1 -p 6383 info Replication
+```shell
+redis-cli -h 127.0.0.1 -p 6381 info Replication
+redis-cli -h 127.0.0.1 -p 6382 info Replication
+redis-cli -h 127.0.0.1 -p 6383 info Replication
 ```
 
 ```
@@ -184,21 +149,6 @@ repl_backlog_histlen:0
 
 
 
-## 哨兵
-
-Redis 的 Sentinel 系统用于管理多个 Redis 服务器（instance）， 该系统执行以下三个任务：
-
-* 监控（Monitoring）： Sentinel 会不断地检查你的主服务器和从服务器是否运作正常。
-* 提醒（Notification）： 当被监控的某个 Redis 服务器出现问题时， Sentinel 可以通过 API 向管理员或者其他应用程序发送通知。
-* 自动故障迁移（Automatic failover）： 当一个主服务器不能正常工作时， Sentinel 会开始一次自动故障迁移操作， 它会将失效主服务器的其中一个从服务器升级为新的主服务器， 并让失效主服务器的其他从服务器改为复制新的主服务器； 当客户端试图连接失效的主服务器时， 集群也会向客户端返回新主服务器的地址， 使得集群可以使用新主服务器代替失效服务器。
-
-
-![](redis.img/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-07.png)
-
-避免 Sentinel 自身单点故障
-
- ![](redis.img/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-23.png)
-
 
 ### AOF
 
@@ -242,7 +192,7 @@ Redis 的 Sentinel 系统用于管理多个 Redis 服务器（instance）， 该
 5. 限制允许重写最小 AOF 文件大小，避免多次重复写入
 6. AOF 持久化文件同步过程中断电宕机，导致文件损坏，这里 yes 表示继续回复，并写入日志
 
-##### 测试
+#### 测试
 
 ```
 [TEST].~ > redis-cli 
@@ -264,4 +214,48 @@ Starting redis-server:                                     [  OK  ]
 >
 > [AOF 持久化的实现 &mdash; Redis 设计与实现](http://redisbook.com/preview/aof/aof_implement.html)
 
+
+
+
+
+
+
+## 哨兵
+
+Redis 的 Sentinel 系统用于管理多个 Redis 服务器（instance）， 该系统执行以下三个任务：
+
+* 监控（Monitoring）： Sentinel 会不断地检查你的主服务器和从服务器是否运作正常。
+* 提醒（Notification）： 当被监控的某个 Redis 服务器出现问题时， Sentinel 可以通过 API 向管理员或者其他应用程序发送通知。
+* 自动故障迁移（Automatic failover）： 当一个主服务器不能正常工作时， Sentinel 会开始一次自动故障迁移操作， 它会将失效主服务器的其中一个从服务器升级为新的主服务器， 并让失效主服务器的其他从服务器改为复制新的主服务器； 当客户端试图连接失效的主服务器时， 集群也会向客户端返回新主服务器的地址， 使得集群可以使用新主服务器代替失效服务器。
+
+
+![](redis.img/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-07.png)
+
+避免 Sentinel 自身单点故障
+
+ ![](redis.img/%E6%88%AA%E5%9B%BE_2018-01-12_15-56-23.png)
+
+
+
+
+
+
+
+## 高可用使用 master
+
+使用 haproxy 代理到后端的 master redis
+
+```
+backend redis
+    option tcp-check
+    tcp-check connect
+    tcp-check send PING\r\n
+    tcp-check expect string +PONG
+    tcp-check send info\ replication\r\n
+    tcp-check expect string role:master
+    tcp-check send QUIT\r\n
+    tcp-check expect string +OK
+    server node-1 192.168.105.21:6379 check
+    server node-2 192.168.105.22:6379 check
+```
 
