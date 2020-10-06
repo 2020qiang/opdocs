@@ -19,5 +19,9 @@
     "/redis": {
         "title": "redis",
         "path": "缓存系统/redis.md"
+    },
+    "/ubuntu/LUKS": {
+        "title": "Ubuntu 全盘加密",
+        "path": "计算机使用/Ubuntu_LUKS_全盘加密.md"
     }
 }
