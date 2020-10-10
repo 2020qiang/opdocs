@@ -534,6 +534,13 @@ sql> show create table table_name;
 
 >   目的：自动迁移数据、自动清理
 
+```mysql
+mysql> delimiter $$   # 将语句的结束符号从分号;暂时改为两个$$(可以是自定义)
+mysql> delimiter ;　　# 将语句的结束符号恢复为分号
+```
+
+
+
 创建一个函数，上一条语句失败，下一条语句不会执行
 
 ```sql
@@ -555,7 +562,7 @@ BEGIN
                                         DELETE   FROM jbc_wallet_income_back WHERE (date < DATE_SUB(CURDATE(),INTERVAL 90 DAY)) ORDER BY uid DESC LIMIT 10000;
   END WHILE;
 
-END;
+END
 ```
 
 定时触发函数，STARTS 参数要更改为下次执行时间
