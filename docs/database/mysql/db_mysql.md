@@ -530,23 +530,71 @@ sql> show create table table_name;
 
 
 
-## 定时事件
 
->   目的：自动迁移数据、自动清理
+
+---
+
+
+
+
+
+## 存储过程
+
+封装 自动迁移数据、自动清理
+
+
 
 ```mysql
-mysql> delimiter $$   # 将语句的结束符号从分号;暂时改为两个$$(可以是自定义)
-mysql> delimiter ;　　# 将语句的结束符号恢复为分号
+delimiter $$   # 将语句的结束符号从分号;暂时改为两个$$(可以是自定义)
+delimiter ;　　# 将语句的结束符号恢复为分号
 ```
 
 
 
-创建一个函数，上一条语句失败，下一条语句不会执行
+创建存储过程
+
+```mysql
+CREATE PROCEDURE sp_stored_procedure_name()
+BEGIN
+    DELETE FROM table_name_order          WHERE (date < DATE_SUB(CURDATE(),INTERVAL 5 DAY));
+    DELETE FROM table_name_order_main     WHERE (date < DATE_SUB(CURDATE(),INTERVAL 5 DAY));
+    DELETE FROM table_name_recharge_order WHERE (date < DATE_SUB(CURDATE(),INTERVAL 5 DAY));
+END
+```
+
+
+
+查看存储过程
+
+```mysql
+SHOW PROCEDURE STATUS like 'sp_stored_procedure_name' \G
+SHOW CREATE PROCEDURE sp_stored_procedure_name \G
+```
+
+
+
+删除存储过程
+
+```mysql
+DROP PROCEDURE sp_stored_procedure_name;
+```
+
+
+
+手动执行存储过程
+
+```mysql
+call sp_stored_procedure_name();
+```
+
+
+
+创建存储过程
 
 ```sql
-DROP PROCEDURE IF EXISTS tansfer_wallet_income_3daysago;
+DROP PROCEDURE IF EXISTS sp_stored_procedure_name;
 
-CREATE PROCEDURE tansfer_wallet_income_3daysago()
+CREATE PROCEDURE sp_stored_procedure_name()
 BEGIN
 
   -- backup table data
@@ -565,23 +613,64 @@ BEGIN
 END
 ```
 
-定时触发函数，STARTS 参数要更改为下次执行时间
 
-```sql
-CREATE EVENT tansfer_wallet_income
-  ON SCHEDULE EVERY 1 DAY STARTS '2019-06-29 06:35:00'
-  ON COMPLETION PRESERVE
-DO call tansfer_wallet_income_3daysago();
-```
 
-开启事件
 
-```sql
+
+---
+
+
+
+
+
+## 每日定时事件
+
+
+
+开启事件功能
+
+```mysql
 SHOW VARIABLES LIKE 'event_scheduler';
-SET GLOBAL event_scheduler=ON;
-
-show events;
-alter event tansfer_wallet_income ON COMPLETION PRESERVE ENABLE;
-alter event tansfer_wallet_income ON COMPLETION PRESERVE DISABLE;
+SET GLOBAL event_scheduler = ON;
 ```
+
+
+
+事件定时触发
+
+```mysql
+CREATE EVENT sp_stored_procedure_name
+  ON SCHEDULE EVERY 1 DAY STARTS '2019-06-29 00:00:00'  -- 第一次开始的时间，下次会1天后，再1天后执行
+  ON COMPLETION PRESERVE                                -- 本计划任务执行完毕后，不会删除本事件
+DO call sp_stored_procedure_name();                     -- 要运行的sql语句，这里是执行存储过程
+```
+
+
+
+查看事件
+
+```mysql
+-- 查看事件
+-- 输出的Status表示是否在就绪状态
+SHOW events \G
+SELECT * FROM information_schema.events \G
+```
+
+
+
+启动或停止单个事件
+
+```mysql
+alter event sp_stored_procedure_name ON COMPLETION PRESERVE ENABLE;
+alter event sp_stored_procedure_name ON COMPLETION PRESERVE DISABLE;
+```
+
+
+
+删除事件
+
+```mysql
+DROP event sp_stored_procedure_name;
+```
+
 
