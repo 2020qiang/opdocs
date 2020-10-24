@@ -21,7 +21,7 @@
         "path": "缓存系统/redis.md"
     },
     "/vpn/softether": {
-        "title": "VPN SoftEther",
+        "title": "SoftEther VPN",
         "path": "网络/vpn_softether/softether.md"
     }
 }
