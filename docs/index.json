@@ -5,7 +5,7 @@
         "hide": true
     },
     "/nginx": {
-        "title": "nginx",
+        "title": "Nginx",
         "path": "WEB服务端/nginx.md"
     },
     "/phpfpm": {
@@ -13,15 +13,15 @@
         "path": "WEB服务端/phpfpm.md"
     },
     "/mysql": {
-        "title": "mysql",
+        "title": "MySQL",
         "path": "database/mysql/db_mysql.md"
     },
     "/redis": {
-        "title": "redis",
+        "title": "Redis",
         "path": "缓存系统/redis.md"
     },
-    "/ubuntu/LUKS": {
-        "title": "Ubuntu 全盘加密",
-        "path": "计算机使用/Ubuntu_LUKS_全盘加密.md"
+    "/vpn/softether": {
+        "title": "VPN SoftEther",
+        "path": "网络/vpn_softether/softether.md"
     }
 }
