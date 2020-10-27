@@ -2,7 +2,7 @@
 
 
 
-2019/11 - 四川甘孜藏族自治州
+2019/11 - 四川稻城亚丁
 
 ![](about.img/2019-11-Tibetan-area-DaochengYading.jpg)
 
