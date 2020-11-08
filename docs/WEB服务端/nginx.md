@@ -408,6 +408,20 @@ http {
 
 
 
+#### add_header 浏览器不缓存html
+
+```nginx
+location / {
+    if ($request_filename ~* ".+\.html$") {
+        add_header cache-control 'no-cache, no-store, must-revalidate';
+    }
+}
+```
+
+
+
+
+
 ---
 
 
