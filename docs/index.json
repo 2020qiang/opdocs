@@ -23,5 +23,13 @@
     "/vpn/softether": {
         "title": "SoftEther VPN",
         "path": "网络/vpn_softether/softether.md"
+    },
+    "/shell": {
+        "title": "Linux Bash Shell",
+        "path": "软件开发/shell.md"
+    },
+    "/golang": {
+        "title": "GoLang",
+        "path": "软件开发/shell.md"
     }
 }
