@@ -31,5 +31,9 @@
     "/golang": {
         "title": "GoLang",
         "path": "软件开发/golang.md"
+    },
+    "/monitor/tick": {
+        "title": "TICK 服务器监控套件",
+        "path": "监控/tick.md"
     }
 }
