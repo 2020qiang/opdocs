@@ -166,7 +166,7 @@ yum install -y epel-release yum-utils
 yum makecache
 yum update -y
 yum upgrade -y
-yum install -y bash-completion htop lsof iftop iotop screen wget tree xz zip unzip screen mlocate rsync bc git extundelete telnet
+yum install -y bash-completion htop net-tools lsof iftop iotop screen wget tree xz zip unzip screen mlocate rsync bc git extundelete telnet
 
 # 安装 docker
 if [[ "$(echo ${install_env} |grep -w docker |wc -l)" == "1" ]]; then
