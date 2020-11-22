@@ -40,7 +40,7 @@ slmgr -ato
 
 ### 安装 Microsoft Store
 
-1. 浏览器打开 <http://aka.ms/diag_apps10> 下载修复程序
+1. 浏览器打开 <https://aka.ms/diag_apps10> 下载修复程序
 2. 按照提示登陆微软帐号
 3. 点击修复
 
