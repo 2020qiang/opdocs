@@ -35,5 +35,9 @@
     "/monitor/tick": {
         "title": "TICK 服务器监控套件",
         "path": "监控/tick.md"
+    },
+    "/windows": {
+        "title": "Windows 计算机使用",
+        "path": "个人使用计算机/Windows计算机使用.md"
     }
 }

@@ -1,4 +1,10 @@
-## 概述
+# Windows 计算机使用
+
+
+
+
+
+## 磁盘加密
 
 
 
@@ -38,7 +44,7 @@
 
 
 
-## 防篡改硬件智能卡
+#### 防篡改硬件智能卡
 
 
 
@@ -85,15 +91,15 @@
 
 
 
-### Yubikey 配置
+#### Yubikey 配置
 
 下载管理程序并安装 [YubiKey Manager | Yubico](https://www.yubico.com/products/services-software/download/yubikey-manager/)
 
 
 
-1. 更改默认的管理口令![](Windows加密.img/image_2020-07-18_21-58-28.png)
-2. 更改默认的PIN![](Windows加密.img/image_2020-07-18_21-59-57.png)
-3. 生成RSA自签名证书（BitLocker不支持ECCP）![](Windows加密.img/image_2020-07-18_22-07-02.png)
+1. 更改默认的管理口令![](Windows计算机使用.img/image_2020-07-18_21-58-28.png)
+2. 更改默认的PIN![](Windows计算机使用.img/image_2020-07-18_21-59-57.png)
+3. 生成RSA自签名证书（BitLocker不支持ECCP）![](Windows计算机使用.img/image_2020-07-18_22-07-02.png)
 
 
 
@@ -105,7 +111,7 @@
 
 
 
-## Windows10 配置
+#### Windows10 配置
 
 
 
@@ -122,27 +128,27 @@ Windows Registry Editor Version 5.00
 
 
 
-#### 更改加密强度
+##### 更改加密强度
 
 * BitLocker默认加密强度为AES128，可更改为AES256
 * Win+R 运行 gpedit.msc（组策略）
 
-1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密![](Windows加密.img/image_2020-07-18_22-16-40.png)
-2. 对于 系统盘和固定数据盘 使用XTS，可移动盘使用CBC，为了兼容![](Windows加密.img/image_2020-07-18_22-19-35.png)
+1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密![](Windows计算机使用.img/image_2020-07-18_22-16-40.png)
+2. 对于 系统盘和固定数据盘 使用XTS，可移动盘使用CBC，为了兼容![](Windows计算机使用.img/image_2020-07-18_22-19-35.png)
 
 
 
-#### 启用高级验证选项
+##### 启用高级验证选项
 
 * BitLocker启用TPM+私钥+PIN的验证方式
 * Win+R 运行 gpedit.msc（组策略）
 
-1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密 - 操作系统驱动器![](Windows加密.img/image_2020-07-18_22-59-06.png)
-2. 启用就好，其他选项使用默认![](Windows加密.img/image_2020-07-18_23-00-08.png)
+1. 计算机配置 - 管理模板 - Windows组件 - BitLokcer 驱动器加密 - 操作系统驱动器![](Windows计算机使用.img/image_2020-07-18_22-59-06.png)
+2. 启用就好，其他选项使用默认![](Windows计算机使用.img/image_2020-07-18_23-00-08.png)
 
 
 
-#### 加密系统盘
+##### 加密系统盘
 
 * 如果有TPM，默认使用TPM
 * 系统盘较为特殊不能使用智能卡，原因可查看页尾
@@ -151,7 +157,7 @@ Windows Registry Editor Version 5.00
 
 
 
-#### 加密数据盘
+##### 加密数据盘
 
 - 推荐使用防篡改硬件智能卡，优点在本文章的概述中
 - C盘右键 - 启用 BitLocker - 插入智能卡
@@ -166,7 +172,7 @@ Windows Registry Editor Version 5.00
 
 
 
-## 日常解密
+#### 日常解密
 
 * 开机时需要输入系统盘的PIN（无限尝试次数）
 * 数据盘要插入key，并输入PIN（有限尝试次数）
@@ -179,7 +185,7 @@ Windows Registry Editor Version 5.00
 
 
 
-## 参考
+#### 参考
 
 * [BitLocker 智能卡自签名证书 – Extrawdw](https://blog.extrawdw.net/computer/windows/bitlocker-smartcard-self-signed-certificates/)
 
@@ -188,4 +194,62 @@ Windows Registry Editor Version 5.00
 * [什么是BitLocker驱动器加密？ | Study.com](https://study.com/academy/lesson/what-is-bitlocker-drive-encryption.html)
 
 * [BitLocker为什么不支持预引导身份验证用于智能卡 | Microsoft Docs](https://docs.microsoft.com/en-us/windows/security/information-protection/bitlocker/bitlocker-using-with-other-programs-faq#can-bitlocker-support-smart-cards-for-pre-boot-authentication)
+
+
+
+
+
+---
+
+
+
+
+
+## Windows10 LTSC 问题小记录
+
+
+
+#### 下载原版镜像
+
+* 我上传S3的镜像
+
+```
+未公开
+```
+
+* 来自 msdn.itellyou.cn
+
+```
+ed2k://|file|cn_windows_10_enterprise_ltsc_2019_x64_dvd_9c09ff24.iso|4478906368|E7C526499308841A4A6D116C857DB669|/
+```
+
+
+
+---
+
+
+
+#### 激活
+
+cmd 运行下面命令
+
+```cmd
+slmgr -ipk M7XTQ-FN8P6-TTKYV-9D4CC-J462D
+slmgr -skms kms.03k.org
+slmgr -ato
+```
+
+
+
+---
+
+
+
+#### 安装 Microsoft Store
+
+1. 浏览器打开 <https://aka.ms/diag_apps10> 下载修复程序
+2. 按照提示登陆微软帐号
+3. 点击修复
+
+
 
