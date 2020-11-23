@@ -4,10 +4,10 @@
 
 ### 下载原版镜像
 
-* 我上传的镜像
+* 我上传S3的镜像
 
 ```
-https://download.liuq.org/microsoft.com/windows_10_cn_enterprise_ltsc_2019_x64_dvd_9c09ff24.iso
+未公开
 ```
 
 * 来自 msdn.itellyou.cn
