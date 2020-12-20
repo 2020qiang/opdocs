@@ -332,7 +332,7 @@ http {
 
 
 
-#### proxy 反向代理
+#### http proxy 协议反向代理
 
 1. 长超时表示超时由后端控制
 2. 不限制请求体大小，表示由后端控制
@@ -351,6 +351,38 @@ server {
         proxy_ssl_server_name on;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass https://liuq.org:443;
+    }
+}
+```
+
+
+
+
+
+#### webscoket proxy 协议反响代理
+
+1. webscoket协议有特殊的两个请求头 [`Upgrade`, `Connection`]
+2. 更稳定的 `$connection_upgrade`
+
+```nginx
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    location / {
+        proxy_read_timeout 24h;
+        proxy_send_timeout 24h;
+        client_max_body_size 0;
+        proxy_ssl_server_name on;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
         proxy_pass https://liuq.org:443;
     }
 }
