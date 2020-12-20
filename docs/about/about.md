@@ -1,4 +1,13 @@
-## 一些地方
+
+
+2020 - 魔幻的一年
+
+* 中国防控疫情的表现打脸西方
+* 懂王的精彩演出
+* 居家限制一年
+* S&P 500 十天内熔断四次
+* Fed 扩表一倍
+* Bitcoin 突破 20,000 USD
 
 
 
@@ -23,3 +32,5 @@
 ![](about.img/2019-01-HongKong-narrow-building.jpg)
 
 ![](about.img/2019-01-HongKong-Java-Road.jpg)
+
+
