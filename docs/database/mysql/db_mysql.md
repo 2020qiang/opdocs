@@ -45,11 +45,12 @@ mysql> SELECT user,host FROM mysql.user;
 8 rows in set (0.00 sec)
 
 
-GRANT REPLICATION CLIENT ON *.* TO      'status'@'127.0.0.1' IDENTIFIED BY 'passWord';
-GRANT REPLICATION SLAVE  ON *.* TO 'replication'@'192.168.%' IDENTIFIED BY 'passWord';
+GRANT REPLICATION CLIENT ON *.* TO 'status'@'127.0.0.1' IDENTIFIED BY 'passWord';
+GRANT REPLICATION SLAVE  ON *.* TO  'slave'@'192.168.%' IDENTIFIED BY 'passWord';
 
-GRANT                 SELECT         ON `dbname`.* TO 'peeker'@'%' IDENTIFIED BY 'passWord';
-GRANT INSERT, DELETE, SELECT, UPDATE ON `dbname`.* TO 'editor'@'%' IDENTIFIED BY 'passWord';
+GRANT               SELECT           ON `dbname`.* TO 'peeker'@'%' IDENTIFIED BY 'passWord';
+GRANT INSERT,DELETE,SELECT,UPDATE,CREATE,DROP,ALTER 
+                                     ON `dbname`.* TO 'editor'@'%' IDENTIFIED BY 'passWord';
 
 GRANT ALL PRIVILEGES ON `dbname`.* TO 'www'@'10.0.1.8' IDENTIFIED BY 'passWord';
 ```
