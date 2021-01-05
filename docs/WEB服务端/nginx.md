@@ -416,7 +416,12 @@ server {
 }
 ```
 
-
+> ```shell
+> # centos 信任自签名证书
+> cd /etc/pki/ca-trust/source/anchors/
+> vi liuq.org.crt
+> update-ca-trust extract
+> ```
 
 
 
