@@ -234,7 +234,7 @@ ed2k://|file|cn_windows_10_enterprise_ltsc_2019_x64_dvd_9c09ff24.iso|4478906368|
 cmd 运行下面命令
 
 ```cmd
-slmgr -ipk M7XTQ-FN8P6-TTKYV-9D4CC-J462D
+slmgr -ipk 4P9W8-BN6PB-QGXH9-F6GWJ-PKCR9
 slmgr -skms kms.03k.org
 slmgr -ato
 ```
