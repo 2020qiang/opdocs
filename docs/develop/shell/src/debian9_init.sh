@@ -4,7 +4,7 @@
 
 # 为方便某些用户，这种非官方的 替代版本包括非免费固件，以便为某些笨拙的硬件提供额外支持
 # 只包含核心Debian安装程序代码和一小组核心文本模式程序
-# http://cdimage.debian.org/cdimage/unofficial/non-free/cd-including-firmware/archive/9.9.0+nonfree/amd64/iso-cd/firmware-9.9.0-amd64-netinst.iso
+# https://cdimage.debian.org/cdimage/unofficial/non-free/cd-including-firmware/archive/9.13.0+nonfree/amd64/iso-cd/firmware-9.13.0-amd64-netinst.iso
 
 # 分区
 # efi  = 100m
