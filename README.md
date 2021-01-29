@@ -1,14 +1,6 @@
-## 
+<h1 style="text-align:center;font-size:30px">好记性不如烂笔头！</h1>
 
 
-
-
-
-<div style="text-align:center;font-size:30px">好记性不如烂笔头！</div>
-
-
-
-## 
 
 
 
