@@ -1,4 +1,4 @@
-<h1 style="text-align:center;font-size:30px">好记性不如烂笔头！</h1>
+# 个人文档
 
 
 
@@ -12,6 +12,5 @@
 
 1. 使用 [github](https://github.com/) 托管markdown源码
 2. 使用 [typora](https://typora.io/) 文档编辑器
-
 
 
