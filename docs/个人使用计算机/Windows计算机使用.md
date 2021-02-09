@@ -253,3 +253,18 @@ slmgr -ato
 
 
 
+---
+
+
+
+#### UAC 添加密码验证
+
+* 保存为 `.reg` 文件并执行
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
+"ConsentPromptBehaviorAdmin"=dword:00000001
+```
+

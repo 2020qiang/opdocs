@@ -320,7 +320,7 @@ software_list='''
     xfwm4-theme-breeze xfwm4-themes
     redshift-gtk exfat-fuse exfat-utils p7zip p7zip-full p7zip-rar rdesktop img2pdf
     ibus ibus-chewing im-config ibus-table-array30 ibus-qt4 ibus-gtk ibus-gtk3 ibus-sunpinyin
-    network-manager-gnome
+    network-manager-gnome dnsutils
 '''
 echo "${software_list}" |xargs -n 99 apt-get install -y
 unset software_list
