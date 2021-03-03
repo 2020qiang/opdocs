@@ -127,3 +127,21 @@ php_value[max_execution_time] = 40s
 catch_workers_output = yes
 php_flag[expose_php] = off
 ```
+
+
+
+
+
+## Xhprof 性能分析
+
+可以分析出php代码哪部分执行慢
+
+```shell
+pear upgrade pear
+pecl install -f xhprof
+
+[xhprof]
+extension=xhprof.so
+xhprof.output_dir=/opt/www/runtime/xhprof
+```
+
