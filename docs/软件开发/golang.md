@@ -1,3 +1,20 @@
+### goland 开始菜单
+
+```ini
+# ${HOME}/.local/share/applications/GoLand.desktop
+[Desktop Entry]
+Name=GoLand
+Exec=/bin/bash -i -c "/opt/GoLand/bin/goland.sh" %f
+Icon=/opt/GoLand/bin/goland.png
+Terminal=false
+Type=Application
+Categories=Development;
+```
+
+
+
+
+
 ### 获取目录中所有有效的子文件
 
 ```golang
