@@ -1,29 +1,34 @@
-#### Let’s Encrypt多域名证书申请过程记录
+# HTTPS 证书免费申请
+
+
+
+## Let’s Encrypt 多域名证书申请过程记录
 
 Certbot作为Let’s Encrypt项目的一个官方客户端，可以完全自动化的获取、部署和更新证书
 
-#### 安装客户端
 
-```
+
+### 安装客户端
+
+```shell
 wget https://dl.eff.org/certbot-auto
 chmod u+x certbot-auto
 rm -vrf /etc/letsencrypt /var/log/letsencrypt
 mv certbot-auto /usr/bin
 ```
 
----
 
-#### 申请证书
+
+### 申请证书
 
 下面的方式 二选一
 
-#### 一、
 
-获取域名FQDN证书：
 
-需要更改相应的记录到本机公网ip，nginx 开启 http 80 端口并做如下配置
+一、使用 http 请求验证，获取域名FQDN证书
 
-```
+```nginx
+# 需要更改相应的记录到本机公网ip，nginx 开启 http 80 端口并做如下配置
 server {
 ...
     location /.well-known/acme-challenge/ {
@@ -34,18 +39,16 @@ server {
 }
 ```
 
-执行
-
-```
-certbot-auto certonly --webroot --email main@gmail.com -w /opt/www -d example.com -d www.example.com
+```shell
+certbot certonly --webroot --email main@gmail.com -w /opt/www -d example.com -d www.example.com
 ```
 
-#### 二、
 
-获取泛解析证书：
 
-```
-certbot-auto certonly --manual --email main@gmail.com -d *.example.com -d example.com --agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
+二、使用 txt 解析验证，获取泛解析证书：
+
+```shell
+certbot certonly --manual --email main@gmail.com -d *.example.com -d example.com --agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
 ```
 
 根据提示解析相应的 txt 记录，最好将ttl值设置为最少，然后等待几秒再回车
@@ -69,7 +72,7 @@ NdQXk_lyLaewc0lMjIZpsUMzQhxzwueGKPKixVNFMT0
 Before continuing, verify the record is deployed.
 ```
 
----
+
 
 ### 成功
 
@@ -92,9 +95,13 @@ IMPORTANT NOTES:
    making regular backups of this folder is ideal.
 ```
 
-> 续期：  
-> 证书的有效期是3个月，可以在证书过期前的30天内，进行续期  
-> certbot-auto renew
 
 
+### 续期
+
+证书的有效期是3个月，可以在证书过期前的30天内，进行续期  
+
+```shell
+certbot renew
+```
 
