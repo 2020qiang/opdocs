@@ -39,5 +39,9 @@
     "/windows": {
         "title": "Windows 计算机使用",
         "path": "个人使用计算机/Windows计算机使用.md"
+    },
+    "/https-free-certificate-application": {
+        "title": "HTTPS 免费证书申请",
+        "path": "WEB服务端/https-free-certificate-application.md"
     }
 }
