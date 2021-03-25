@@ -37,7 +37,9 @@
 
 2013/12 - 广东增城
 
-![](about.img/2013-12-Guangdong-Zengcheng.jpg)
+![](about.img/2013-12-Guangdong-Zengcheng-square.jpg)
+
+![](about.img/2013-12-Guangdong-Zengcheng-me.jpg)
 
 
 
