@@ -35,11 +35,11 @@
 
 
 
-2013/12 - 广东增城
+2013/12 - 广东新塘
 
-![](about.img/2013-12-Guangdong-Zengcheng-square.jpg)
+![](about.img/2013-12-Guangdong-Xintang-school-square.jpg)
 
-![](about.img/2013-12-Guangdong-Zengcheng-me.jpg)
+![](about.img/2013-12-Guangdong-Xintang-school-me.jpg)
 
 
 
