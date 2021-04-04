@@ -268,3 +268,15 @@ Windows Registry Editor Version 5.00
 "ConsentPromptBehaviorAdmin"=dword:00000001
 ```
 
+
+
+---
+
+
+
+#### 安装 Edge 浏览器
+
+因为LTSC版是不带edge浏览器，而且官网下载也麻烦，就上传了这个文件，每次用这个exe安装就好了。
+
+* [下载安装程序](https://download.liuq.org/microsoft.com/MicrosoftEdgeSetup.exe)
+
