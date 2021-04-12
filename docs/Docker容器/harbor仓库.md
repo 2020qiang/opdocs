@@ -16,48 +16,90 @@
 
 ## 安装
 
-目标主机需要docker，并且要安装docker compose
+* 需要先 `docker v17.06.0-ce+` 和 `docker-compose v1.18.0+`
 
 ```shell
 # docker
-sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-sudo yum install -y docker-ce docker-ce-cli containerd.io
-sudo systemctl enable docker
+yum install -y yum-utils device-mapper-persistent-data lvm2
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install -y docker-ce docker-ce-cli containerd.io
+systemctl enable docker
 
-# compose
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+# docker-compose
+curl -sSL "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o "/usr/local/bin/docker-compose"
+chmod +x "/usr/local/bin/docker-compose"
+ln -s "/usr/local/bin/docker-compose" "/usr/bin/docker-compose"
 ```
 
-```shell
-# harbor
-wget -c $(https://github.com/goharbor/harbor/releases)
-tar -xvf harbor-offline-installer-v1.8.1.tgz
-cd harbor/
+* 安装 harbor
+  1. 转到 <https://github.com/goharbor/harbor/releases> 下载安装包
+  2. 在服务器上新建个目录 `${HOME}/.harbor`，<span style="color:red;">这个目录不能删</span>，原因
+     1. 容器是有挂载上面下的包的配置文件
+     2. `docker-compose` 也会在这里自动新建（执行 `install.sh` 后）
+  3. 将下载的包拷贝解压到 `${HOME}/.harbor` 目录中（<span style="color:red;">这个目录不能删除，下载包最好也保留</span>）
+  4. 按照 `harbor.yml.tmpl` 复制一份名为 `harbor.yml`，再修改 `harbor.yml` 这个配置文件
+  5. 最后再执行 `./install.sh` 安装完毕了
+* 启动/停止 harbor
+  * 启动停止需要使用 `docker-compose`
+  * 使用方法是在 `${HOME}/.harbor` 这个目录或子目录里找到 `docker-compose.yml`
+  * `cd` 切换到 `docker-compose.yml` 文件的目录中
+  * 再运行 `docker-compose start` 或 `docker-compose stop` 就行
+  * 会按照启停顺序执行
 
-# https
-sudo mkdir -vp /opt/harbor/{keys,data}
-cd /opt/harbor/keys
-sudo openssl genrsa -out "./null.key" 1024
-sudo openssl req -x509 -days 7300 -new -key "./null.key" -out "./null.cert" -subj '/CN=null'
+```yaml
+# harbor.yml 我个人测试机可以拿来参考
 
-# config
-#  1. 使用域名 
-#  1. 安装数据目录 = /opt/harbor/data
-#  2. https路径   = /opt/harbor/keys/*
-vi harbor.yml
-$(https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md)
-
-# install
-#   --with-clair
-#       集成漏洞扫描
-#   --with-notary
-#       目的是为了增加开发者对于所使用镜像的安全性，保证所使用的镜像与当初内容提供者是相同
-#       用于发布和管理受信任内容的集合工具，发布者签名，消费者验证内容的完整性和发布者
-sudo ./install.sh
+hostname: docker.example.com         # 域名，用于后台复制容器地址时拼接的
+http:
+  port: 8081                         # 因为会使用http代理，这样方便点
+harbor_admin_password: Harbor12345   # 默认浏览器登陆admin用户的密码
+database:
+  password: root123
+  max_idle_conns: 50
+  max_open_conns: 10
+data_volume: /data/.docker/harbor    # 数据卷挂载
+jobservice:
+  max_job_workers: 2
+notification:
+  webhook_job_max_retry: 10
+log:
+  level: warning
+  local:
+    rotate_count: 5
+    rotate_size: 200M
+    location: /var/log/harbor
+_version: 2.2.0  # 这个不能改，也不能删除，只能按下载文件解压出的模板
 ```
+
+
+
+
+
+## 小优化
+
+因为默认安装后的容器名字，有些带 `harbor-` 前缀，有些没带这个前缀
+
+例如
+
+```
+nginx
+registry
+redis
+registryctl
+harbor-jobservice
+harbor-core
+harbor-portal
+harbor-db
+harbor-log
+```
+
+更改需要先用 `docker-compose stop` 停止服务
+
+再 `docker rename` 修改容器名，
+
+最后修改 `docker-compose.yml`，
+
+再 `docker-compose start` 启动就好了
 
 
 
