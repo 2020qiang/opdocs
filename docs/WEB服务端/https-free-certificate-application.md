@@ -11,10 +11,8 @@ Certbot作为Let’s Encrypt项目的一个官方客户端，可以完全自动�
 ### 安装客户端
 
 ```shell
-wget https://dl.eff.org/certbot-auto
-chmod u+x certbot-auto
-rm -vrf /etc/letsencrypt /var/log/letsencrypt
-mv certbot-auto /usr/bin
+yum install -y epel-release
+yum install -y certbot
 ```
 
 
