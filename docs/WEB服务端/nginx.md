@@ -149,9 +149,7 @@ iptables -t filter -A INPUT -p tcp -m tcp -m multiport --dports 80,443 -m connli
 ```nginx
 server {
     listen 127.0.0.1:8080;
-    location / {
-      add_header strict-transport-security "max-age=31536000; includeSubDomains; preload" always;
-    }
+    add_header strict-transport-security "max-age=31536000; includeSubDomains; preload" always;
 }
 ```
 
