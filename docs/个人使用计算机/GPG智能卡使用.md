@@ -1,12 +1,14 @@
-## Nitrokey 硬件私钥 初始化
 
-这些是必须的操作
+
+## Nitrokey 硬件智能卡
+
+
+
+##### 更改默认密码  <span style="color:red;">必须</span>
 
 1. 下载 [Nitrokey App](https://www.nitrokey.com/download)
 2. 更改默认 PIN 码
    ![](GPG智能卡使用.img/Nitrokey-App-change-pin.png)
-
-
 
 说明
 
@@ -17,11 +19,7 @@
 
 
 
-
-
-## Nitrokey 硬件私钥 存储密码
-
-某些型号可以存储密码，条目在 10-30 条
+##### 存储密码字符串
 
 ![](GPG智能卡使用.img/Nitrokey-App-save-password.png)
 
@@ -33,15 +31,19 @@
 
 
 
+## GPG
 
 
-#### 历史
+
+##### 历史
 
 1. PGP 是一个基于 RSA、AES 算法实现，PGP本身是商业应用程序
 2. OpenPGP 是一项开放互联网标准，任何支持这一标准的程序也被允许称作 OpenPGP
 3. GnuPG/GPG 是GNU 组织遵循 OpenPGP 技术标准设计，并与 OpenPGP 兼容
 
 
+
+##### 说明
 
 在 GPG 中，有主钥和子钥的概念，主钥和子钥都可以指定不同的用途
 
@@ -57,7 +59,7 @@
 
 
 
-#### 功能
+##### 功能
 
 | 简写 | 能力（Capability）/用途（Usage） | 说明                                                 |
 | :--: | -------------------------------- | ---------------------------------------------------- |
