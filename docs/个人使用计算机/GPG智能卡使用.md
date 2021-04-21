@@ -7,7 +7,7 @@
 ##### 更改默认密码  <span style="color:red;">必须</span>
 
 1. 下载 [Nitrokey App](https://www.nitrokey.com/download)
-2. 更改默认 PIN 码
+2. 更改管理PIN码和用户PIN码
    ![](GPG智能卡使用.img/Nitrokey-App-change-pin.png)
 
 说明
