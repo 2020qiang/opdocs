@@ -250,48 +250,7 @@ gpg:              unchanged: 1
 
 
 
-## OpenPGP智能卡解锁LUKS根分区
-
-
-
-设置scdaemon的配置文件，该文件会将所有日志消息重定向到/dev/null，以减少混乱。
-
-```shell
-[[ ! -d "/etc/luks_gnupg" ]] && mkdir "/etc/luks_gnupg" && chmod 0700 "/etc/luks_gnupg"
-cat >"/etc/luks_gnupg/scdaemon.conf"<<EOF
-log-file /dev/null
-EOF
-```
-
-将智能卡插入连接到机器的智能卡读取器中。
-
-```shell
-gpg --homedir "/etc/luks_gnupg" --card-edit
-```
-
-安装PIN输入应用程序
-
-```shell
-apt-get install pinentry-curses
-```
-
-通过创建file将GnuPG代理配置为使用pinentry-curses
-
-```shell
-echo "pinentry-program /usr/bin/pinentry-curses" >/etc/luks_gnupg/gpg-agent.conf
-```
-
-
-
-
-
----
-
-
-
-
-
-## 本地GnuPG解锁LUKS根分区
+## GnuPG解锁LUKS根分区
 
 * 清除密钥槽 `cryptsetup luksErase -q /dev/sda3`
 
@@ -307,9 +266,14 @@ echo "pinentry-program /usr/bin/pinentry-curses" >/etc/luks_gnupg/gpg-agent.conf
 [[ ! -d "/etc/luks_gnupg" ]] && mkdir "/etc/luks_gnupg" && chmod 0700 "/etc/luks_gnupg"
 ```
 
-* 初始化密钥环并创建GnuPG私钥
+* 初始化密钥环
 
 ```shell
+# 使用gpg智能卡密钥环则先获取公钥
+gpg --homedir "/etc/luks_gnupg" --card-edit
+gpg> fetch
+
+# 使用本地密钥环则新建密钥环
 gpg --homedir "/etc/luks_gnupg" --full-generate-key
 ```
 
@@ -323,6 +287,12 @@ apt-get install pinentry-curses
 
 ```shell
 echo "pinentry-program /usr/bin/pinentry-curses" >/etc/luks_gnupg/gpg-agent.conf
+```
+
+* 减少混乱的日志输出
+
+```shell
+echo "log-file /dev/null" >/etc/luks_gnupg/scdaemon.conf
 ```
 
 
@@ -428,6 +398,7 @@ cp -a /lib/terminfo/l/linux "${DESTDIR}/etc/terminfo/l/linux"
 copy_exec /usr/bin/gpg2
 copy_exec /usr/bin/gpg-agent
 copy_exec /usr/bin/pinentry-curses
+copy_exec /usr/lib/gnupg/scdaemon
 
 exit 0
 ```
@@ -448,6 +419,12 @@ update-initramfs -u -k all
 
 
 #### 五、完成
+
+删除旧密码短语
+
+```shell
+cryptsetup luksRemoveKey /dev/sda3
+```
 
 重启
 
@@ -472,7 +449,7 @@ update-initramfs -u -k all
 cryptsetup luksDump "/dev/sda3" |grep Slot
 
 # 删除id为0的插槽
-cryptsetup luksKillSlot "/dev/sda3" 1
+cryptsetup luksKillSlot "/dev/sda3" 0
 
 # 添加密钥到插槽
 cryptsetup luksAddKey "/dev/sda3" "/masterkeyfile.key"
