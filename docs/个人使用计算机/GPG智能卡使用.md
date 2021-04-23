@@ -80,7 +80,7 @@
 
 ## GnuPG 常用命令
 
-* 必用程序 `apt-get -y install gnupg2 scdaemon pcscd dirmngr`
+* 必用程序 `apt-get install gnupg2 scdaemon pcscd dirmngr`
 * 如果 `~/.gnupg/` 清空过，则需要运行 `gpgconf --kill gpg-agent`
 
 
@@ -239,4 +239,292 @@ gpg: key 0000000000000000: "Real name (Comment) <Email address>" changed
 gpg: Total number processed: 1
 gpg:              unchanged: 1
 ```
+
+
+
+
+
+---
+
+
+
+
+
+## OpenPGP智能卡解锁LUKS根分区
+
+
+
+设置scdaemon的配置文件，该文件会将所有日志消息重定向到/dev/null，以减少混乱。
+
+```shell
+[[ ! -d "/etc/luks_gnupg" ]] && mkdir "/etc/luks_gnupg" && chmod 0700 "/etc/luks_gnupg"
+cat >"/etc/luks_gnupg/scdaemon.conf"<<EOF
+log-file /dev/null
+EOF
+```
+
+将智能卡插入连接到机器的智能卡读取器中。
+
+```shell
+gpg --homedir "/etc/luks_gnupg" --card-edit
+```
+
+安装PIN输入应用程序
+
+```shell
+apt-get install pinentry-curses
+```
+
+通过创建file将GnuPG代理配置为使用pinentry-curses
+
+```shell
+echo "pinentry-program /usr/bin/pinentry-curses" >/etc/luks_gnupg/gpg-agent.conf
+```
+
+
+
+
+
+---
+
+
+
+
+
+## 本地GnuPG解锁LUKS根分区
+
+* 清除密钥槽 `cryptsetup luksErase -q /dev/sda3`
+
+> 参考 <https://wiki.majic.rs/Openpgp/protecting_luks_decryption_key_in_debian_jessie_us/>
+
+
+
+#### 一、设置GnuPG密钥环
+
+* 存储密钥环的目录
+
+```shell
+[[ ! -d "/etc/luks_gnupg" ]] && mkdir "/etc/luks_gnupg" && chmod 0700 "/etc/luks_gnupg"
+```
+
+* 初始化密钥环并创建GnuPG私钥
+
+```shell
+gpg --homedir "/etc/luks_gnupg" --full-generate-key
+```
+
+* 安装PIN输入应用程序
+
+```shell
+apt-get install pinentry-curses
+```
+
+* 配置GnuPG代理
+
+```shell
+echo "pinentry-program /usr/bin/pinentry-curses" >/etc/luks_gnupg/gpg-agent.conf
+```
+
+
+
+#### 二、为LUKS设置新的解密密钥
+
+* 生成256位随机密钥
+
+```shell
+dd if=/dev/random bs=1 count=256 of="/etc/luks_gnupg/disk.key"
+```
+
+* 将密钥添加到加密分区
+
+```shell
+cryptsetup luksAddKey "/dev/sda3" "/etc/luks_gnupg/disk.key"
+```
+
+* 使用GnuPG私钥加密LUKS密钥
+
+```shell
+gpg --homedir "/etc/luks_gnupg" --recipient <pub id> --encrypt-files "/etc/luks_gnupg/disk.key"
+```
+
+* 安全删除明文的LUKS密钥
+
+```shell
+shred -u "/etc/luks_gnupg/disk.key"
+```
+
+
+
+#### 三、设置解密脚本
+
+* 创建用于获取明文LUKS密钥的脚本
+
+```shell
+#!/bin/sh
+
+# /usr/local/sbin/luks_gnupg_decrypt.sh
+# This is the safest way to ensure the GnuPG home directory is correctly set.
+export GNUPGHOME=/etc/luks_gnupg/
+
+gpg2 --no-tty --decrypt /etc/luks_gnupg/disk.key.gpg
+```
+
+* 给予对应权限
+
+```shell
+chown root:root "/usr/local/sbin/luks_gnupg_decrypt.sh"
+chmod 0750 "/usr/local/sbin/luks_gnupg_decrypt.sh"
+```
+
+* 测试LUKS加密分区的解密
+
+```shell
+/usr/local/sbin/luks_gnupg_decrypt.sh |cryptsetup open --test-passphrase "/dev/sda3" test --key-file=-
+```
+
+
+
+#### 四、准备initramdisk
+
+* 追加配置到 `/etc/crypttab`
+
+```shell
+,keyscript=/usr/local/sbin/luks_gnupg_decrypt.sh
+```
+
+* 创建initramdisk以确保所需的二进制文件、GnuPG密钥环、解密脚本 都包含在镜像中
+
+```shell
+#!/bin/sh
+
+# /etc/initramfs-tools/hooks/luks_gnupg
+
+set -e
+
+PREREQ="cryptroot"
+
+prereqs()
+{
+        echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+        prereqs
+        exit 0
+        ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+# Deploy the keyring.
+cp -a /etc/luks_gnupg/ "${DESTDIR}/etc/"
+
+# Deploy terminfo (required for pinentry-curses).
+mkdir -p "${DESTDIR}/etc/terminfo/l/"
+cp -a /lib/terminfo/l/linux "${DESTDIR}/etc/terminfo/l/linux"
+
+# Deploy GnuPG binaries and pinentry-curses.
+copy_exec /usr/bin/gpg2
+copy_exec /usr/bin/gpg-agent
+copy_exec /usr/bin/pinentry-curses
+
+exit 0
+```
+
+* 给予对应权限
+
+```shell
+chown root:root "/etc/initramfs-tools/hooks/luks_gnupg"
+chmod 0750 "/etc/initramfs-tools/hooks/luks_gnupg"
+```
+
+* 更新initramdisk镜像
+
+```shell
+update-initramfs -u -k all
+```
+
+
+
+#### 五、完成
+
+重启
+
+
+
+
+
+---
+
+
+
+
+
+## LUKS密钥插槽
+
+<span style="color:red;">警告</span>：不要将所有插槽都清空，这将意味着下次无法解锁
+
+
+
+```shell
+# 查看插槽
+cryptsetup luksDump "/dev/sda3" |grep Slot
+
+# 删除id为0的插槽
+cryptsetup luksKillSlot "/dev/sda3" 1
+
+# 添加密钥到插槽
+cryptsetup luksAddKey "/dev/sda3" "/masterkeyfile.key"
+```
+
+
+
+如果所有所有插槽已经被清空，并且LUKS已经解锁，还能补救下
+
+下面重新插入密码到插槽
+
+```shell
+# 显示系统上已安装的所有分区的加密密钥，从这获取aes-xts-plain64类似128个连续字符串
+dmsetup table --showkeys
+
+# 写入临时文件
+vi "existinglukskey.txt"
+
+# 创建二进制密钥文件
+xxd -r -p "existinglukskey.txt" "existinglukskey.bin"
+
+# 输入新密码短语就完成
+cryptsetup luksAddKey "/dev/sda3" --master-key-file <(cat existinglukskey.bin)
+```
+
+
+
+或者也可以备份 Master Key，这个是恢复密钥
+
+```shell
+cryptsetup luksDump --dump-master-key /dev/sda3
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
