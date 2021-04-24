@@ -563,6 +563,8 @@ mount -a
 
 #### 八、重新配置引导程序以使用USB闪存驱动器
 
+提示输入grub参数则按默认值
+
 ```shell
 dpkg-reconfigure grub-efi-amd64
 ```
