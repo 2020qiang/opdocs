@@ -7,10 +7,9 @@
 # https://cdimage.debian.org/cdimage/unofficial/non-free/cd-including-firmware/archive/9.13.0+nonfree/amd64/iso-cd/firmware-9.13.0-amd64-netinst.iso
 
 # 分区
-# efi  = 100m
-# boot = 250m
-# swap = mem/2
-# root+swap = disk/2
+# efi  = 50m
+# boot = 500m
+# swap = mem*2+200m
 
 # 安装系统
 # main                           -> Install
