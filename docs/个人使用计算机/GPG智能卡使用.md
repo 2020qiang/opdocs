@@ -308,7 +308,7 @@ dd if=/dev/random bs=1 count=256 of="/etc/luks_gnupg/disk.key"
 * 将密钥添加到加密分区
 
 ```shell
-cryptsetup luksAddKey "/dev/sda3" "/etc/luks_gnupg/disk.key"
+cryptsetup luksAddKey "/dev/sda1" "/etc/luks_gnupg/disk.key"
 ```
 
 * 使用GnuPG私钥加密LUKS密钥
@@ -336,7 +336,7 @@ shred -u "/etc/luks_gnupg/disk.key"
 # This is the safest way to ensure the GnuPG home directory is correctly set.
 export GNUPGHOME=/etc/luks_gnupg/
 
-gpg2 --no-tty --decrypt /etc/luks_gnupg/disk.key.gpg
+gpg2 --no-tty --decrypt /etc/luks_gnupg/disk.key.gpg 2>/dev/null
 ```
 
 * 给予对应权限
@@ -349,7 +349,7 @@ chmod 0750 "/usr/local/sbin/luks_gnupg_decrypt.sh"
 * 测试LUKS加密分区的解密
 
 ```shell
-/usr/local/sbin/luks_gnupg_decrypt.sh |cryptsetup open --test-passphrase "/dev/sda3" test --key-file=-
+/usr/local/sbin/luks_gnupg_decrypt.sh |cryptsetup open --test-passphrase "/dev/sda1" test --key-file=-
 ```
 
 
@@ -423,7 +423,7 @@ update-initramfs -u -k all
 删除旧密码短语
 
 ```shell
-cryptsetup luksRemoveKey /dev/sda3
+cryptsetup luksRemoveKey "/dev/sda1"
 ```
 
 重启
@@ -446,13 +446,13 @@ cryptsetup luksRemoveKey /dev/sda3
 
 ```shell
 # 查看插槽
-cryptsetup luksDump "/dev/sda3" |grep Slot
+cryptsetup luksDump "/dev/sda1" |grep Slot
 
 # 删除id为0的插槽
-cryptsetup luksKillSlot "/dev/sda3" 0
+cryptsetup luksKillSlot "/dev/sda1" 0
 
 # 添加密钥到插槽
-cryptsetup luksAddKey "/dev/sda3" "/masterkeyfile.key"
+cryptsetup luksAddKey "/dev/sda1" "/masterkeyfile.key"
 ```
 
 
