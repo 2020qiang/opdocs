@@ -315,6 +315,7 @@ cryptsetup luksAddKey "/dev/sda1" "/etc/luks_gnupg/disk.key"
 
 ```shell
 gpg --homedir "/etc/luks_gnupg" --recipient <pub id> --encrypt-files "/etc/luks_gnupg/disk.key"
+chmod 0400 "/etc/luks_gnupg/disk.key.gpg"
 ```
 
 * 安全删除明文的LUKS密钥
