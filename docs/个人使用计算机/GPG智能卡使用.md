@@ -337,7 +337,7 @@ shred -u "/etc/luks_gnupg/disk.key"
 # This is the safest way to ensure the GnuPG home directory is correctly set.
 export GNUPGHOME=/etc/luks_gnupg/
 
-gpg2 --no-tty --decrypt /etc/luks_gnupg/disk.key.gpg 2>/dev/null
+gpg2 --no-tty --decrypt /etc/luks_gnupg/disk.key.gpg
 ```
 
 * 给予对应权限
