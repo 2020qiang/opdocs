@@ -302,7 +302,7 @@ echo "log-file /dev/null" >/etc/luks_gnupg/scdaemon.conf
 * 生成256位随机密钥
 
 ```shell
-dd if=/dev/random bs=1 count=256 of="/etc/luks_gnupg/disk.key"
+dd if=/dev/random bs=1 count=4096 of="/etc/luks_gnupg/disk.key"
 ```
 
 * 将密钥添加到加密分区
