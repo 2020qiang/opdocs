@@ -455,7 +455,7 @@ cryptsetup luksKillSlot "/dev/sda1" 0
 # 添加密钥到插槽
 cryptsetup luksAddKey "/dev/sda1" "/masterkeyfile.key"
 
-# 删除密码短语
+# 删除指定密码短语
 cryptsetup luksRemoveKey "/dev/sda1"
 ```
 
