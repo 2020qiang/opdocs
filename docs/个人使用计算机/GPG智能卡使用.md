@@ -299,7 +299,7 @@ echo "log-file /dev/null" >/etc/luks_gnupg/scdaemon.conf
 
 #### 二、为LUKS设置新的解密密钥
 
-* 生成256位随机密钥
+* 生成4096位随机密钥
 
 ```shell
 dd if=/dev/random bs=1 count=4096 of="/etc/luks_gnupg/disk.key"
