@@ -317,7 +317,7 @@ software_list='''
     chromium chromium-l10n firefox-esr firefox-esr-l10n-zh-cn
     xfce4 xfce4-power-manager xfce4-power-manager-plugins xfce4-screenshooter
     xfwm4-theme-breeze xfwm4-themes
-    redshift-gtk exfat-fuse exfat-utils p7zip p7zip-full p7zip-rar rdesktop img2pdf
+    redshift-gtk exfat-fuse exfat-utils p7zip p7zip-full p7zip-rar rdesktop img2pdf ffmpeg
     ibus ibus-chewing im-config ibus-table-array30 ibus-qt4 ibus-gtk ibus-gtk3 ibus-sunpinyin
     network-manager-gnome dnsutils libreoffice-writer libreoffice-calc libreoffice-l10n-zh-cn
 '''
