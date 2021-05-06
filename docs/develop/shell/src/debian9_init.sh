@@ -311,7 +311,7 @@ apt-get upgrade -y
 apt-get dist-upgrade -y
 software_list='''
     locales ttf-wqy-microhei ttf-wqy-zenhei sudo
-    vim bash-completion htop wget curl tree axel xsel xterm apt-file unzip bc lsof
+    vim bash-completion htop wget curl tree axel xsel xterm apt-file unzip bc lsof xarchiver
     xclip git-core iotop build-essential gparted iftop unrar redis-tools mariadb-client filezilla net-tools
     xpad leafpad lightdm terminator sshpass keepassx dia gpick feh exfat-fuse exfat-utils meld
     chromium chromium-l10n firefox-esr firefox-esr-l10n-zh-cn
