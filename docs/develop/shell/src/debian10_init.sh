@@ -289,14 +289,6 @@
 #     在所有应用程序中共享同一个输入法
 
 
-# DNS
-F="/etc/resolv.conf"
-cat > ${F} << EOF
-nameserver 8.8.8.8
-nameserver 8.8.4.4
-EOF
-chattr +i ${F}
-
 
 # 软件源
 cat > /etc/apt/sources.list << EOF
