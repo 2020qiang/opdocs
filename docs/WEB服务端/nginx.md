@@ -457,6 +457,27 @@ location / {
 
 
 
+#### domain 域名白名单
+
+```nginx
+server {
+    listen 80 default_server;
+  # listen 443 ssl default_server;
+    server_name _;
+    return 500;
+}
+
+server {
+    listen 80;
+    root   /opt/www;
+    server_name example.com;
+}
+```
+
+
+
+
+
 ---
 
 
