@@ -95,6 +95,28 @@ database,type,key,size_in_bytes,encoding,num_elements,len_largest_element,expiry
 
 
 
+# 条件批量删除key
+
+
+
+redis 中 DEL指令支持多个key作为参数进行删除 但不支持通配符和正则，无法通过条件批量删除key；
+
+不过我们可以借助 Linux 的管道和 xargs 指令来完成这个动作。
+
+```shell
+redis-cli keys '*test' |grep -E 'test$' |xargs -n 99 redis-cli del
+```
+
+
+
+
+
+---
+
+
+
+
+
 # 主从复制
 
 异步进行，不影响主线程
