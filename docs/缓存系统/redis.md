@@ -1,4 +1,4 @@
-## 安装
+# 安装
 
 ```shell
 yum localinstall -y "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
@@ -10,9 +10,92 @@ yum --enablerepo="remi" install -y redis
 
 
 
+---
 
 
-## 主从复制
+
+
+
+# 分析key大小
+
+
+
+#### 粗略的分析
+
+* 该命令使用scan方式对key进行统计，所以使用不会对redis造成阻塞
+
+```shell
+redis-cli -h <host> -p <port> --bigkeys
+```
+
+```
+# Scanning the entire keyspace to find biggest keys as well as
+# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
+# per 100 SCAN commands (not usually needed).
+
+[00.00%] Biggest hash   found so far 's_9329222' with 3 fields
+[01.90%] Biggest hash   found so far 'uno_facet_2018-12-20' with 59 fields
+[27.05%] Biggest set    found so far 'blacklist_set_key' with 31832 members
+[73.87%] Biggest string found so far 'PUSH_NEWS' with 3104237 bytes
+[86.18%] Biggest zset   found so far 'region_hot_北京' with 2688 members
+
+-------- summary -------
+
+Sampled 4263 keys in the keyspace!
+Total key length in bytes is 174847 (avg len 41.02)
+
+Biggest string found 'PUSH_NEWS' has 3104237 bytes
+Biggest    set found 'blacklist_set_key' has 31832 members
+Biggest   hash found 'uno_facet_2018-12-20' has 59 fields
+Biggest   zset found 'region_hot_北京' has 2688 members
+
+1616 strings with 3771161 bytes (37.91% of keys, avg size 2333.64)
+0 lists with 0 items (00.00% of keys, avg size 0.00)
+1 sets with 31832 members (00.02% of keys, avg size 31832.00)
+2353 hashs with 7792 fields (55.20% of keys, avg size 3.31)
+293 zsets with 333670 members (06.87% of keys, avg size 1138.81)
+```
+
+
+
+#### 细化每个key大小
+
+* 需要`python2.4`以上版本和`pip`
+
+```shell
+yum install python-pip
+pip install rdbtools
+```
+
+```shell
+rdb -c memory /path/redis.rdb >memory.csv
+```
+
+* 示例输出`csv`文件
+
+```
+database,type,key,size_in_bytes,encoding,num_elements,len_largest_element,expiry
+0,hash,index_flow_yingshi,10492,hashtable,1,8992,2019-01-14T08:20:10.236000
+0,hash,index_movie,22068,hashtable,7,2896,2019-01-14T07:29:19.685000
+0,string,index_module_novel,8296,string,7694,7694,2019-01-13T00:27:46.128000
+0,string,index_bottom_baike_aikan,8296,string,7632,7632,2019-01-14T02:27:11.850000
+0,string,index_bottom_tools,5224,string,4549,4549,2019-01-13T01:02:09.171000
+0,string,index_module_travel,7272,string,6408,6408,2019-01-13T00:43:39.478000
+```
+
+* 后面可使用`shell`脚本来分析
+
+
+
+
+
+---
+
+
+
+
+
+# 主从复制
 
 异步进行，不影响主线程
 
