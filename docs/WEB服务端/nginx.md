@@ -213,7 +213,7 @@ server {
     index  index.html;
     server_name example.com;
 
-    location ^~ /server/(.*) {
+    location ~ /server/(.*) {
         proxy_read_timeout 24h;
         proxy_send_timeout 24h;
         client_max_body_size 0;
