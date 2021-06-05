@@ -173,20 +173,24 @@ server {
 
 
 
-#### mobile 手机端子root
+#### mobile 手机端子alias
 
 PC端使用一套前端，手机端使用另一套前端
 
 ```nginx
 server {
     listen 80;
-    root   /opt/www/html/pc;
     index  index.html;
+    server_name example.com;
+
     location / {
-        if ($http_user_agent ~* "(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino") {
-            root /opt/www/html/mobile;
+        if ($http_user_agent ~* "(mobile|nokia|iphone|ipad|android|samsung|htc|blackberry)") {
+            rewrite ^(.*)$ /mobile$1 redirect;
         }
+        rewrite ^(.*)$ /home$1 redirect;
     }
+    location ^~ /home { alias /opt/www/html/pc/dist/; }
+    location ^~ /mobile { alias /opt/www/html/mobile/dist/; }
 }
 ```
 
@@ -206,12 +210,16 @@ server {
 ```nginx
 server {
     listen 80;
-    server_name liuq.org;
-    location ~ /server/(.*) {
+    index  index.html;
+    server_name example.com;
+
+    location ^~ /server/(.*) {
         proxy_read_timeout 24h;
         proxy_send_timeout 24h;
         client_max_body_size 0;
+        proxy_ssl_server_name on;
         proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:8080/$1?$query_string;
     }
 }
@@ -249,6 +257,7 @@ http {
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
     access_log /var/log/nginx/access.log main buffer=32k flush=5s;
+    # access_log off;
 }
 ```
 
@@ -277,12 +286,12 @@ server {
 
 
 
-#### redirect 强制重定向到https
+#### redirect 强制301重定向到https
 
 ```nginx
 server {
     listen 80;
-    return 301 https://$host$request_uri;
+    rewrite ^(.*)$ $1 permanent;
 }
 ```
 
@@ -471,6 +480,30 @@ server {
     listen 80;
     root   /opt/www;
     server_name example.com;
+}
+```
+
+
+
+
+
+#### auth_basic 基本http身份验证
+
+1. 创建密码文件
+
+```shell
+username=""
+password=""
+echo "${username}:$(openssl passwd -1 ${password})" >"/etc/nginx/htpasswd"
+```
+
+2. 修改`nginx.conf`配置文件
+
+```nginx
+server {
+    listen 80;
+    auth_basic           "Administrator's Area";
+    auth_basic_user_file /etc/nginx/htpasswd;
 }
 ```
 
