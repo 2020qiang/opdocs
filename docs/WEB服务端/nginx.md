@@ -501,9 +501,32 @@ echo "${username}:$(openssl passwd -1 ${password})" >"/etc/nginx/htpasswd"
 
 ```nginx
 server {
-    listen 80;
     auth_basic           "Administrator's Area";
     auth_basic_user_file /etc/nginx/htpasswd;
+}
+```
+
+
+
+
+
+#### 404 php文件不存在则报错404
+
+```nginx
+location ~* \.php$ {
+    try_files $uri =404;
+}
+```
+
+
+
+
+
+#### index.php 仅允许解析入口文件
+
+```php
+location ~* \.php$ {
+    if ($request_filename != "/opt/www/public/index.php") { return 403; }
 }
 ```
 
@@ -517,101 +540,76 @@ server {
 
 
 
-## 项目用的配置
-
-1. 只允许执行指定php文件，防止被上传恶意代码执行（当然php解释器，不能有写项目代码文件的权限）
-2. 真的404的话显示404，不会显示php的Not Found
-3. 只公开少量的后端接口（前端全开放无所谓）
-
-```nginx
-###
-### 允许本地所有路由
-###
-server {
-    listen 127.0.0.1:8080;
-    root   /opt/www/public;
-    index  index.php;
-
-    location / {
-        if (!-e $request_filename) {
-            rewrite ^(.*)$ /index.php?s=$1 last;
-            break;
-        }
-    }
-    location ~* \.php$ {
-        if ($request_filename != "/opt/www/public/index.php") {
-            return 403;
-        }
-        try_files $uri =404;
-        fastcgi_pass  127.0.0.1:9000;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include       fastcgi_params;
-    }
-}
-
-###
-### 公开
-###
-server {
-    listen 80;
-    root   /opt/www/public;
-    index  index.html;
-
-    server_name liuq.org;
-    server_name docs.liuq.org;
-
-    location = / {
-        proxy_read_timeout 24h;
-        proxy_send_timeout 24h;
-        client_max_body_size 0;
-        proxy_set_header Host $host;
-        proxy_pass http://127.0.0.1:8080;
-    }
-    location ~* "^/server/api1$" {
-        proxy_read_timeout 24h;
-        proxy_send_timeout 24h;
-        client_max_body_size 0;
-        proxy_set_header Host $host;
-        proxy_pass http://127.0.0.1:8080;
-    }
-    location ~* "^/server/api2$" {
-        proxy_read_timeout 24h;
-        proxy_send_timeout 24h;
-        client_max_body_size 0;
-        proxy_set_header Host $host;
-        proxy_pass http://127.0.0.1:8080;
-    }
-    location ~* "\.php$" { return 403; }
-}
-```
-
-
+## 配置实例
 
 
 
 #### 自定义代理
 
-1. 客户端发送自定义请求头`x-data-protocol,x-data-host`，表示代理的后端地址
+客户端发送自定义请求头下面，表示代理的后端地址
+
+* `x-data-protocol`
+* `x-data-host`
+* `x-data-port`
 
 ```nginx
+location / {
+    resolver 8.8.8.8 8.8.4.4 ipv6=off;
+    proxy_read_timeout 24h;
+    proxy_send_timeout 24h;
+    client_max_body_size 0;
+    proxy_ssl_server_name on;
+    proxy_set_header X-Data-Protocol "";
+    proxy_set_header X-Data-Host "";
+    proxy_set_header Host $http_x_data_host;
+    proxy_pass $http_x_data_protocol://$http_x_data_host:$http_x_data_port;
+}
+```
+
+
+
+#### 反向代理一个完整网站
+
+```nginx
+http {
+    proxy_cache_path /tmp/nginx_cache levels=1:2 keys_zone=my_cache:100m;
     server {
-        listen 443 ssl default_server;
-
-        ssl_certificate     /opt/keys/null.crt;
-        ssl_certificate_key /opt/keys/null.key;
-
+        listen 80;
+        server_name proxy.com;
         location / {
-            resolver 8.8.8.8 8.8.4.4;
+
+            # 代理的目标
+            set $x_protocol    https;
+            set $x_domain      example.com;
+            set $x_port        443;
+
+            # 配置基础的代理
+            resolver 1.1.1.1 8.8.8.8 ipv6=off;
             proxy_read_timeout 24h;
             proxy_send_timeout 24h;
             client_max_body_size 0;
             proxy_ssl_server_name on;
-            proxy_set_header X-Data-Protocol "";
-            proxy_set_header X-Data-Host "";
-            proxy_set_header Host $http_x_data_host;
-            proxy_pass $http_x_data_protocol://$http_x_data_host;
+            proxy_set_header Host $x_domain;
+            proxy_pass $x_protocol://$x_domain:$x_port;
+
+            # 替换后端报错下面的code为302到/ 
+            proxy_intercept_errors on;
+            recursive_error_pages on;
+            error_page 404 =302 http://$host;
+            error_page 500 502 503 504 =302 http://$host;
+
+            # 字符串替换域名
+            proxy_set_header Accept-Encoding "";
+            sub_filter $x_domain $host;
+            sub_filter_types text/html text/css text/javascript;
+            sub_filter_once on;
+
+            # 缓存
+            proxy_cache my_cache;
+            proxy_cache_valid any 1h;
+            proxy_cache_key $x_protocol$x_domain$x_port$host$uri$is_args$args;
         }
     }
-
+}
 ```
 
