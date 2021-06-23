@@ -105,21 +105,11 @@ update mysql.user set password=password('qweQWE123') where host='localhost' and 
 --set-gtid-purged=OFF
 忽略set语句导出gtid值
 
---master-data
-会生成 CHANGE MASTER TO MASTER_LOG_FILE='mysql2-bin.000049', MASTER_LOG_POS=587; 语句
-
---single-transaction
-innodb 将不会锁表，因为会在转储之前使用指定事务级别，然后开始事务，使用事务中的快照读，这样既能保证一致性读，也不会锁表
-
---databases, -B
-通常命令行后面的参数视为数据库名称，后面的名称作为表名称
-使用此选项，它将所有名称参数视为数据库名称。每个新数据库之前，输出中都包含CREATE DATABASE和USE语句
-
---tables
---databases或-B选项。 mysqldump将选项后面的所有名称参数视为表名
-
 -r name.sql
 直接输出到指定的文件，会覆盖原文件
+
+--ignore-table=db00.table_name
+排除导出表
 ```
 
 ### 导出
