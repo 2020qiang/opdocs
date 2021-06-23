@@ -109,7 +109,7 @@ update mysql.user set password=password('qweQWE123') where host='localhost' and 
 直接输出到指定的文件，会覆盖原文件
 
 --ignore-table=db00.table_name
-排除导出表
+排除导出表，排除多个表则可以用多个--ignore-table
 ```
 
 ### 导出
