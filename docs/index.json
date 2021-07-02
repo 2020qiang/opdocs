@@ -47,5 +47,13 @@
     "/web-front-end": {
         "title": "Web 前端",
         "path": "软件开发/Web_前端.md"
+    },
+    "/docker/harbor": {
+        "title": "harbor 容器仓库",
+        "path": "Docker容器/harbor仓库.md"
+    },
+    "/game": {
+        "title": "游戏",
+        "path": "其他不重要/游戏.md"
     }
 }
