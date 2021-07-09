@@ -1,0 +1,59 @@
+{
+    "/about": {
+        "title": "关于我",
+        "path": "about/about.md",
+        "hide": true
+    },
+    "/nginx": {
+        "title": "Nginx",
+        "path": "WEB服务端/nginx.md"
+    },
+    "/phpfpm": {
+        "title": "phpfpm",
+        "path": "WEB服务端/phpfpm.md"
+    },
+    "/mysql": {
+        "title": "MySQL",
+        "path": "database/mysql/db_mysql.md"
+    },
+    "/redis": {
+        "title": "Redis",
+        "path": "缓存系统/redis.md"
+    },
+    "/vpn/softether": {
+        "title": "SoftEther VPN",
+        "path": "网络/vpn_softether/softether.md"
+    },
+    "/shell": {
+        "title": "Linux Bash Shell",
+        "path": "软件开发/shell.md"
+    },
+    "/golang": {
+        "title": "GoLang",
+        "path": "软件开发/golang.md"
+    },
+    "/monitor/tick": {
+        "title": "TICK 服务器监控套件",
+        "path": "监控/tick.md"
+    },
+    "/windows": {
+        "title": "Windows 计算机使用",
+        "path": "个人使用计算机/Windows计算机使用.md"
+    },
+    "/https/free-certificate": {
+        "title": "HTTPS 免费证书申请",
+        "path": "WEB服务端/https-free-certificate-application.md"
+    },
+    "/web-front-end": {
+        "title": "Web 前端",
+        "path": "软件开发/Web_前端.md"
+    },
+    "/docker/harbor": {
+        "title": "harbor 容器仓库",
+        "path": "Docker容器/harbor仓库.md"
+    },
+    "/game": {
+        "title": "游戏",
+        "path": "其他不重要/游戏.md"
+    }
+}
