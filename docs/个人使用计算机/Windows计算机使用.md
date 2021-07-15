@@ -280,3 +280,20 @@ Windows Registry Editor Version 5.00
 
 * [下载安装程序](https://download.liuq.org/microsoft.com/MicrosoftEdgeSetup.exe)
 
+
+
+---
+
+
+
+#### Windows使用UTC作为时间（兼容linux）
+
+* 保存为 `.reg` 文件并执行
+
+```reg
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation]
+ "RealTimeIsUniversal"=dword:00000001
+```
+
