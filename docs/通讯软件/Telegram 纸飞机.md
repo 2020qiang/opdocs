@@ -23,3 +23,33 @@
 
 
 
+---
+
+
+
+
+
+# 客户端
+
+
+
+#### 问题：IBus无法输入中文
+
+
+
+1. 使用下面命令获取Telegram的启动配置文件
+
+```shell
+find $HOME -type f |grep -i -E 'telegram(.*)desktop$'
+```
+
+2. 编辑启动配置文件
+
+```ini
+# 旧
+Exec=/opt/Telegram/Telegram ...
+
+# 新
+Exec=env QT_IM_MODULE=IBus /opt/Telegram/Telegram ...
+```
+
