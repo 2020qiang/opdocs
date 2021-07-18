@@ -630,3 +630,5 @@ dev_sda1    UUID=xxxxxx    /etc/LUKS/data.key    luks
 /dev/mapper/dev_sda1    /opt/data    ext4    defaults    0 1
 ```
 
+9. 重启计算机
+
