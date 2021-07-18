@@ -325,7 +325,33 @@ software_list='''
 echo "${software_list}" |xargs -n 99 apt-get install -y
 unset software_list
 apt-get --purge autoremove -y nano xfce4-notifyd
-apt-get clean
+
+###
+### iptables
+###
+# install
+DEBIAN_FRONTEND=noninteractive apt-get install -y iptables-persistent
+systemctl enable netfilter-persistent
+# flush
+iptables  -P INPUT ACCEPT
+ip6tables -P INPUT ACCEPT
+iptables  -F
+ip6tables -F
+iptables  -X
+ip6tables -X
+# localhost
+iptables -A INPUT -i lo -s 127.0.0.1/32 -d 127.0.0.1/32 -j ACCEPT
+iptables -A INPUT -i lo -j REJECT
+ip6tables -A INPUT -i lo -s ::1/128 -d ::1/128 -j ACCEPT
+ip6tables -A INPUT -i lo -j REJECT
+# network
+iptables -A INPUT -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT
+iptables -A INPUT -m state --state NEW -j REJECT
+ip6tables -A INPUT -m state --state NEW -j REJECT
+# save
+netfilter-persistent save
+
 
 exit
 
