@@ -614,3 +614,31 @@ http {
 }
 ```
 
+
+
+#### 强制https+域名白名单
+
+```nginx
+# default block
+server {
+    listen 80 default_server;
+    server_name _;
+    return 301 https://$host$uri$is_args$args;
+}
+server {
+    listen 443 ssl default_server;
+    ssl_certificate     /etc/nginx/localhost.crt;
+    ssl_certificate_key /etc/nginx/localhost.key;
+    server_name _;
+    return 500;
+}
+
+# localhost
+server {
+    listen 443 ssl;
+    root   /var/www/html;
+    index  index.nginx-debian.html;
+    server_name localhost;
+}
+```
+
