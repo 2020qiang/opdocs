@@ -596,8 +596,8 @@ http {
             # 替换后端报错下面的code为302到/ 
             proxy_intercept_errors on;
             recursive_error_pages on;
-            error_page 404 =302 http://$host;
-            error_page 500 502 503 504 =302 http://$host;
+            error_page 404 =302 https://$host;
+            error_page 500 502 503 504 =302 https://$host;
 
             # 字符串替换域名
             proxy_set_header Accept-Encoding "";
@@ -608,7 +608,7 @@ http {
             # 缓存
             proxy_cache my_cache;
             proxy_cache_valid any 1h;
-            proxy_cache_key $x_protocol$x_domain$x_port$host$uri$is_args$args;
+            proxy_cache_key $x_protocol$x_domain$x_port$x_args$host$uri$is_args$args;
         }
     }
 }
