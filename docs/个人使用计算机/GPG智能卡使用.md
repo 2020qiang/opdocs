@@ -452,6 +452,9 @@ cryptsetup luksDump "/dev/sda1" |grep Slot
 # 删除id为0的插槽
 cryptsetup luksKillSlot "/dev/sda1" 0
 
+# 添加密码到插槽
+cryptsetup luksAddKey "/dev/sda1"
+
 # 添加密钥到插槽
 cryptsetup luksAddKey "/dev/sda1" "/masterkeyfile.key"
 
@@ -586,7 +589,59 @@ dd if=/dev/urandom bs=16M of="/dev/sda2"
 
 
 
+---
 
 
 
+
+
+## 自动挂载其他LUKS磁盘
+
+1. 创建一个目录以存放密钥文件
+
+```shell
+mkdir -vp "/etc/LUKS"
+```
+
+2. 生成一个密钥文件
+
+```shell
+dd if=/dev/urandom bs=1 count=4096 of="/etc/LUKS/data.key"
+```
+
+3. 密钥文件修改为root用户才可读
+
+```shell
+chmod -v 0400 "/etc/LUKS/data.key"
+```
+
+4. 密钥文件添加到加密的驱动器里
+
+```shell
+cryptsetup luksAddKey "/dev/sda1" "/etc/LUKS/data.key"
+```
+
+5. 测试密钥文件能不能成功解密驱动器
+
+```shell
+cat "/etc/LUKS/data.key" |cryptsetup open --test-passphrase "/dev/sda1" test --key-file=-
+```
+
+6. 获取 `UUID`
+
+```shell
+blkid "/dev/sda1"
+```
+
+7. 编辑 `/etc/crypttab` 追加下面配置
+
+```
+dev_sda1    UUID=xxxxxx    /etc/LUKS/data.key    luks
+```
+
+8. 编辑 `/etc/fstab` 追加下面配置
+
+```
+/dev/mapper/dev_sda1    /opt/data    ext4    defaults    0 1
+```
 
