@@ -612,7 +612,8 @@ dd if=/dev/urandom bs=1 count=4096 of="/etc/LUKS/data.key"
 3. 密钥文件修改为root用户才可读
 
 ```shell
-chmod -v 0400 "/etc/LUKS/data.key"
+chmod 0400 "/etc/LUKS/data.key"
+chmod 0700 "/etc/LUKS"
 ```
 
 4. 密钥文件添加到加密的驱动器里
