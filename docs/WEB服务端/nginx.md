@@ -403,10 +403,11 @@ server {
 
 ```shell
 # 可选创建自签名证书
-key="/opt/keys/null.key"
-crt="/opt/keys/null.crt"
+key="/etc/nginx/localhost.key"
+crt="/etc/nginx/localhost.crt"
 openssl genrsa -out ${key} 1024
-openssl req -x509 -days 7300 -new -key ${key} -out ${crt} -subj '/CN=null'
+openssl req -x509 -days 1 -new -key ${key} -out ${crt} -subj '/CN=localhost'
+chmod 0400 ${key} ${crt}
 ```
 
 ```nginx
