@@ -500,22 +500,18 @@ cryptsetup luksDump --dump-master-key /dev/sda3
 
 
 
-## /boot 迁移到优盘
+## `/boot` 迁移到优盘
 
 > apt-get install dosfstools
 
-
-
-#### 一、格式化对应的分区
+1. 格式化对应的分区
 
 ```shell
 mkfs.vfat "/dev/sdb1"
 mkfs.ext4 "/dev/sdb2"
 ```
 
-
-
-#### 二、挂载新的启动分区
+2. 挂载新的启动分区
 
 ```shell
 [[ ! -d "/mnt/new_boot" ]] && mkdir "/mnt/new_boot"
@@ -524,32 +520,26 @@ mount "/dev/sdb2" "/mnt/new_boot"
 mount "/dev/sdb1" "/mnt/new_boot/efi"
 ```
 
-
-
-#### 三、复制到新启动分区
+3. 复制到新启动分区
 
 ```shell
 cp -a /boot/* "/mnt/new_boot"
 ```
 
-
-
-#### 四、确定新启动分区的UUID
+4. 确定新启动分区的UUID
 
 ```shell
 blkid "/dev/sdb1"
 blkid "/dev/sdb2"
 ```
 
+5. 更新 `/etc/fstab` 中的 `/boot`
 
-
-#### 五、更新 `/etc/fstab` 中的 `/boot`
-
+```
 将旧的引导分区UUID替换为新的UUID
+```
 
-
-
-#### 六、卸载引导分区
+6. 卸载引导分区
 
 ```shell
 umount "/mnt/new_boot/efi"
@@ -558,17 +548,13 @@ umount "/boot/efi"
 umount "/boot"
 ```
 
-
-
-#### 七、重新挂载启动分区
+7. 重新挂载启动分区
 
 ```shell
 mount -a
 ```
 
-
-
-#### 八、重新配置引导程序以使用USB闪存驱动器
+8. 重新配置引导程序以使用USB闪存驱动器
 
 提示输入grub参数则按默认值
 
@@ -576,9 +562,7 @@ mount -a
 dpkg-reconfigure grub-efi-amd64
 ```
 
-
-
-#### 九、擦除旧的启动分区
+9. 擦除旧的启动分区
 
 ```shell
 dd if=/dev/urandom bs=16M of="/dev/sda1"
