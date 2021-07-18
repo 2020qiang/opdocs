@@ -328,3 +328,31 @@ sudo systemctl enable ip6tables
 [root@centos]$ sudo cat /etc/sysconfig/iptables
 ```
 
+
+
+---
+
+
+
+### 客户端单机实例
+
+```shell
+# flush
+iptables  -P INPUT ACCEPT
+ip6tables -P INPUT ACCEPT
+iptables  -F
+ip6tables -F
+iptables  -X
+ip6tables -X
+# localhost
+iptables -A INPUT -i lo -s 127.0.0.1/32 -d 127.0.0.1/32 -j ACCEPT
+iptables -A INPUT -i lo -j REJECT
+ip6tables -A INPUT -i lo -s ::1/128 -d ::1/128 -j ACCEPT
+ip6tables -A INPUT -i lo -j REJECT
+# network
+iptables -A INPUT -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT
+iptables -A INPUT -m state --state NEW -j REJECT
+ip6tables -A INPUT -m state --state NEW -j REJECT
+```
+
